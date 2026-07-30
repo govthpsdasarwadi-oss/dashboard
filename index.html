@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BLO Field Work Dashboard</title>
-    <!-- SheetJS CDN for parsing Excel files directly in the browser -->
+    <title>BLO Field Work Dashboard (Firebase Live Sync)</title>
+    
+    <!-- SheetJS CDN for parsing Excel files -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
     <style>
         :root {
             --bg-color: #f4f6f9; 
@@ -59,6 +61,17 @@
 
         header h1 { font-size: 18px; font-weight: 700; }
         header p { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+
+        .sync-badge {
+            display: inline-block;
+            background: #22c55e;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-top: 4px;
+            font-weight: bold;
+        }
 
         .toggle-container { margin-bottom: 10px; }
 
@@ -439,6 +452,7 @@
     <header>
         <h1>BLO Field Assistant</h1>
         <p>Voter Management & Field Verification</p>
+        <span class="sync-badge" id="syncStatus">⚡ Firebase Live Sync Connected</span>
     </header>
 
     <!-- Dropdown Toggle Control Box -->
@@ -557,7 +571,7 @@
         <div class="export-actions">
             <button class="btn-export btn-excel" onclick="exportToExcel()">📊 Excel Report</button>
             <button class="btn-export btn-pdf" onclick="exportToPDF()">📕 PDF / Print</button>
-            <button class="btn-export btn-clear" onclick="clearAllData()">🗑️ Clear</button>
+            <button class="btn-export btn-clear" onclick="clearAllData()">🗑️ Clear DB</button>
         </div>
     </div>
 
@@ -602,27 +616,57 @@
     </div>
 </div>
 
-<script>
-    let voterStore = [];
+<!-- Firebase Modular SDK Script Integration -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    function initData() {
-        const stored = localStorage.getItem('blo_voter_store');
-        if (stored) {
-            try { voterStore = JSON.parse(stored); } catch(e) { voterStore = []; }
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQZu-uf-S4NccvuO6Zgm_b5irREW_MaQs",
+      authDomain: "voty-4df98.firebaseapp.com",
+      databaseURL: "https://voty-4df98-default-rtdb.firebaseio.com",
+      projectId: "voty-4df98",
+      storageBucket: "voty-4df98.firebasestorage.app",
+      messagingSenderId: "687683066956",
+      appId: "1:687683066956:web:88c1c0422d92c7457e28e9"
+    };
+
+    // Initialize Firebase Realtime Database
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const votersRef = ref(db, 'voters');
+
+    window.voterStore = [];
+
+    // Realtime Listener - Sync database changes across all clients automatically
+    onValue(votersRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            window.voterStore = Object.values(data);
         } else {
-            voterStore = [
-                { slNo: '101', name: 'Anand Gowda', parent: 'Suresh Gowda', mobile: '9876543210', aadhaar: '123456789012', gender: 'Male', status: 'active' },
-                { slNo: '102', name: 'Lakshmi Devi', parent: 'Ramesh Gowda', mobile: '9876543211', aadhaar: '987654321098', gender: 'Female', status: 'active' }
-            ];
-            saveData();
+            window.voterStore = [];
         }
         renderAll();
-    }
+    });
 
-    function saveData() {
-        localStorage.setItem('blo_voter_store', JSON.stringify(voterStore));
-    }
+    // Write / Sync function to Realtime Database
+    window.syncDatabase = function() {
+        const dataObj = {};
+        window.voterStore.forEach(voter => {
+            dataObj[voter.slNo] = voter;
+        });
+        set(votersRef, dataObj);
+    };
 
+    window.clearAllData = function() {
+        if (confirm("Are you sure you want to clear ALL voter records from the live Firebase database?")) {
+            remove(votersRef);
+        }
+    };
+</script>
+
+<script>
     function toggleAddPanel() {
         const panel = document.getElementById('voterEntryPanel');
         const arrow = document.getElementById('toggleArrow');
@@ -682,7 +726,7 @@
             if (body) body.innerHTML = '';
         });
 
-        voterStore.forEach(voter => {
+        (window.voterStore || []).forEach(voter => {
             let actionHtml = '';
             let rowClass = '';
 
@@ -741,11 +785,10 @@
     }
 
     function updateStatus(slNo, newStatus) {
-        const voter = voterStore.find(v => v.slNo === String(slNo));
+        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
         if (voter) {
             voter.status = newStatus;
-            saveData();
-            renderAll();
+            window.syncDatabase();
         }
     }
 
@@ -762,21 +805,19 @@
             return;
         }
 
-        if(voterStore.some(v => v.slNo === slNo)) {
+        if((window.voterStore || []).some(v => String(v.slNo) === slNo)) {
             alert(`Serial Number ${slNo} already exists.`);
             return;
         }
 
-        voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
-        saveData();
+        window.voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
+        window.syncDatabase();
 
         document.getElementById('manualSlNo').value = '';
         document.getElementById('manualName').value = '';
         document.getElementById('manualParent').value = '';
         document.getElementById('manualMobile').value = '';
         document.getElementById('manualAadhaar').value = '';
-
-        renderAll();
     }
 
     function parseGender(val) {
@@ -820,15 +861,14 @@
                     continue;
                 }
 
-                if (slNo && !voterStore.some(v => v.slNo === slNo)) {
-                    voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
+                if (slNo && !(window.voterStore || []).some(v => String(v.slNo) === slNo)) {
+                    window.voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
                     importedCount++;
                 }
             }
 
-            saveData();
-            renderAll();
-            alert(`Imported ${importedCount} voters successfully.`);
+            window.syncDatabase();
+            alert(`Imported ${importedCount} voters successfully to Firebase live DB.`);
         };
 
         reader.readAsArrayBuffer(file);
@@ -855,31 +895,31 @@
             const gender = parseGender(pieces[4]);
             const aadhaar = pieces[5] ? pieces[5].trim() : '—';
 
-            if(slNo && !voterStore.some(v => v.slNo === slNo)) {
-                voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
+            if(slNo && !(window.voterStore || []).some(v => String(v.slNo) === slNo)) {
+                window.voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
                 addedCount++;
             }
         });
 
         document.getElementById('bulkText').value = '';
-        saveData();
-        renderAll();
-        alert(`Imported ${addedCount} entries successfully.`);
+        window.syncDatabase();
+        alert(`Imported ${addedCount} entries successfully to Firebase live DB.`);
     }
 
     function calculateMetrics() {
-        const totalVoters = voterStore.length;
-        const maleCount = voterStore.filter(v => (v.gender || 'Male').toLowerCase() === 'male').length;
-        const femaleCount = voterStore.filter(v => (v.gender || '').toLowerCase() === 'female').length;
+        const list = window.voterStore || [];
+        const totalVoters = list.length;
+        const maleCount = list.filter(v => (v.gender || 'Male').toLowerCase() === 'male').length;
+        const femaleCount = list.filter(v => (v.gender || '').toLowerCase() === 'female').length;
 
         const counts = {
-            active: voterStore.filter(v => v.status === 'active').length,
-            received: voterStore.filter(v => v.status === 'received').length,
-            'not-received': voterStore.filter(v => v.status === 'not-received').length,
-            death: voterStore.filter(v => v.status === 'death').length,
-            shifted: voterStore.filter(v => v.status === 'shifted').length,
-            double: voterStore.filter(v => v.status === 'double').length,
-            enrolled: voterStore.filter(v => v.status === 'enrolled').length,
+            active: list.filter(v => v.status === 'active').length,
+            received: list.filter(v => v.status === 'received').length,
+            'not-received': list.filter(v => v.status === 'not-received').length,
+            death: list.filter(v => v.status === 'death').length,
+            shifted: list.filter(v => v.status === 'shifted').length,
+            double: list.filter(v => v.status === 'double').length,
+            enrolled: list.filter(v => v.status === 'enrolled').length,
         };
 
         const totalActioned = totalVoters - counts.active;
@@ -909,7 +949,8 @@
     }
 
     function exportToExcel() {
-        if(voterStore.length === 0) {
+        const list = window.voterStore || [];
+        if(list.length === 0) {
             alert("No data available to export.");
             return;
         }
@@ -944,7 +985,7 @@
                     <tbody>
         `;
 
-        voterStore.forEach(voter => {
+        list.forEach(voter => {
             excelContent += `
                 <tr>
                     <td>${voter.slNo}</td>
@@ -972,16 +1013,6 @@
     function exportToPDF() {
         window.print();
     }
-
-    function clearAllData() {
-        if (confirm("Are you sure you want to clear all voter entries? This cannot be undone.")) {
-            voterStore = [];
-            saveData();
-            renderAll();
-        }
-    }
-
-    window.onload = initData;
 </script>
 
 </body>
