@@ -540,7 +540,7 @@
                 <div class="input-group">
                     <div class="file-upload-box" onclick="document.getElementById('excelFileInput').click()">
                         <label class="file-upload-label" id="fileUploadLabel">Tap to Select Excel / CSV</label>
-                        <span style="font-size: 10px; color: var(--text-muted);">Cols: SlNo,EPIC_No, Name, Relation type,Relation_Name,House_Number,Age,</span>
+                        <span style="font-size: 10px; color: var(--text-muted);">Supports Electoral Roll Excel Format</span>
                         <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)">
                     </div>
                     <p style="font-size: 10px; color: var(--text-muted); text-align: center;">Or paste text below (SlNo, Name, Parent, Mobile, Gender, Aadhaar):</p>
@@ -829,6 +829,7 @@
         return 'Male';
     }
 
+    // Dynamic Header Detection Excel Import Fix
     function handleExcelUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -837,38 +838,51 @@
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            
-            const firstSheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[firstSheetName];
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Read sheet as JSON with header row mapping
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
 
-            let importedCount = 0;
-
-            for (let i = 0; i < jsonData.length; i++) {
-                const row = jsonData[i];
-                if (!row || row.length === 0) continue;
-
-                const slNo = String(row[0] || '').trim();
-                const name = String(row[1] || '—').trim();
-                const parent = String(row[2] || '—').trim();
-                const mobile = String(row[3] || '—').trim();
-                const gender = parseGender(row[4]);
-                const aadhaar = String(row[5] || '—').trim();
-
-                if (i === 0 && (slNo.toLowerCase().includes('sl') || name.toLowerCase().includes('name'))) {
-                    continue;
+                if (!jsonData || jsonData.length === 0) {
+                    alert("Excel sheet is empty!");
+                    return;
                 }
 
-                if (slNo && !(window.voterStore || []).some(v => String(v.slNo) === slNo)) {
-                    window.voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
-                    importedCount++;
-                }
+                let importedCount = 0;
+
+                jsonData.forEach(row => {
+                    // Normalize keys to handle case sensitivity and spaces
+                    const normalizedRow = {};
+                    Object.keys(row).forEach(key => {
+                        const cleanKey = key.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+                        normalizedRow[cleanKey] = String(row[key]).trim();
+                    });
+
+                    // Flexible Column Matcher
+                    const slNo = normalizedRow['slno'] || normalizedRow['sl'] || normalizedRow['slnum'] || normalizedRow['serialno'] || normalizedRow['serial'];
+                    const name = normalizedRow['name'] || normalizedRow['votername'] || normalizedRow['fullname'] || '—';
+                    const parent = normalizedRow['relationname'] || normalizedRow['parent'] || normalizedRow['parentname'] || normalizedRow['husbandname'] || '—';
+                    const mobile = normalizedRow['mobile'] || normalizedRow['mobilenumber'] || normalizedRow['phone'] || '—';
+                    const aadhaar = normalizedRow['aadhaar'] || normalizedRow['aadhar'] || normalizedRow['aadharno'] || '—';
+                    const gender = parseGender(normalizedRow['gender'] || normalizedRow['sex']);
+
+                    if (slNo && !(window.voterStore || []).some(v => String(v.slNo) === String(slNo))) {
+                        window.voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
+                        importedCount++;
+                    }
+                });
+
+                window.syncDatabase();
+                alert(`Imported ${importedCount} voters successfully to Firebase live DB.`);
+            } catch (err) {
+                console.error(err);
+                alert("Error processing Excel file. Please ensure it is a valid .xlsx or .csv document.");
             }
-
-            window.syncDatabase();
-            alert(`Imported ${importedCount} voters successfully to Firebase live DB.`);
         };
 
         reader.readAsArrayBuffer(file);
@@ -895,7 +909,7 @@
             const gender = parseGender(pieces[4]);
             const aadhaar = pieces[5] ? pieces[5].trim() : '—';
 
-            if(slNo && !(window.voterStore || []).some(v => String(v.slNo) === slNo)) {
+            if(slNo && !(window.voterStore || []).some(v => String(v.slNo) === String(slNo))) {
                 window.voterStore.push({ slNo, name, parent, mobile, aadhaar, gender, status: 'active' });
                 addedCount++;
             }
