@@ -120,13 +120,9 @@
         .summary-card.male { border-bottom-color: var(--primary); }
         .summary-card.female { border-bottom-color: var(--pink); }
         .summary-card.total { border-bottom-color: var(--text-main); }
-        .summary-card.received { border-bottom-color: var(--success); }
-        .summary-card.pending { border-bottom-color: var(--danger); }
         .summary-card.death { border-bottom-color: #718096; }
         .summary-card.shifted { border-bottom-color: var(--warning); }
         .summary-card.double { border-bottom-color: var(--double); }
-        .summary-card.enrolled { border-bottom-color: var(--purple); }
-        .summary-card.percentage { border-bottom-color: var(--info); }
 
         .summary-label {
             font-size: 9px;
@@ -402,15 +398,11 @@
             min-height: 30px;
         }
 
-        .row-received { background-color: #f0fff4; }
-        .row-not-received { background-color: #fff5f5; }
         .row-death { background-color: #edf2f7; color: #4a5568; }
         .row-shifted { background-color: #fffaf0; }
         .row-double { background-color: #fff5f5; color: #9b2c2c; }
         .row-enrolled { background-color: #faf5ff; }
 
-        .action-btn.btn-rec:hover { background-color: var(--success); color: white; }
-        .action-btn.btn-not:hover { background-color: var(--danger); color: white; }
         .action-btn.btn-dead:hover { background-color: #718096; color: white; }
         .action-btn.btn-shift:hover { background-color: var(--warning); color: white; }
         .action-btn.btn-double:hover { background-color: var(--double); color: white; }
@@ -447,8 +439,6 @@
             color: white;
             text-align: center;
         }
-        .badge-received { background-color: var(--success); }
-        .badge-not-received { background-color: var(--danger); }
         .badge-death { background-color: #718096; }
         .badge-shifted { background-color: var(--warning); }
         .badge-double { background-color: var(--double); }
@@ -555,21 +545,6 @@
                 <div class="summary-value" id="countTotal">0</div>
             </div>
         </section>
-
-        <section class="summary-grid">
-            <div class="summary-card received">
-                <div class="summary-label">Received</div>
-                <div class="summary-value" id="countReceived">0</div>
-            </div>
-            <div class="summary-card pending">
-                <div class="summary-label">Not Recv.</div>
-                <div class="summary-value" id="countPending">0</div>
-            </div>
-            <div class="summary-card percentage">
-                <div class="summary-label">Progress</div>
-                <div class="summary-value" id="countPercent">0%</div>
-            </div>
-        </section>
         
         <section class="summary-sub-grid">
             <div class="summary-card death">
@@ -643,8 +618,6 @@
     <div class="tabs-container">
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="switchTab('active')">Active (<span id="tabCountActive">0</span>)</button>
-            <button class="tab-btn" onclick="switchTab('received')">Received (<span id="tabCountRec">0</span>)</button>
-            <button class="tab-btn" onclick="switchTab('not-received')">Not Received (<span id="tabCountNot">0</span>)</button>
             <button class="tab-btn" onclick="switchTab('death')">Death (<span id="tabCountDead">0</span>)</button>
             <button class="tab-btn" onclick="switchTab('shifted')">Shifted (<span id="tabCountShift">0</span>)</button>
             <button class="tab-btn" onclick="switchTab('double')">Double (<span id="tabCountDouble">0</span>)</button>
@@ -672,8 +645,6 @@
                 </thead>
                 
                 <tbody id="tab-active" class="tab-content active"></tbody>
-                <tbody id="tab-received" class="tab-content"></tbody>
-                <tbody id="tab-not-received" class="tab-content"></tbody>
                 <tbody id="tab-death" class="tab-content"></tbody>
                 <tbody id="tab-shifted" class="tab-content"></tbody>
                 <tbody id="tab-double" class="tab-content"></tbody>
@@ -813,7 +784,7 @@
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         
-        const tabs = ['active', 'received', 'not-received', 'death', 'shifted', 'double', 'enrolled'];
+        const tabs = ['active', 'death', 'shifted', 'double', 'enrolled'];
         const targetIndex = tabs.indexOf(tabId);
         if (targetIndex !== -1) {
             document.querySelectorAll('.tab-btn')[targetIndex].classList.add('active');
@@ -1053,7 +1024,7 @@
     }
 
     function renderAll() {
-        const tabs = ['active', 'received', 'not-received', 'death', 'shifted', 'double', 'enrolled'];
+        const tabs = ['active', 'death', 'shifted', 'double', 'enrolled'];
         tabs.forEach(tab => {
             const body = document.getElementById(`tab-${tab}`);
             if (body) body.innerHTML = '';
@@ -1079,30 +1050,9 @@
             if (status === 'active') {
                 actionHtml = `
                     <div class="action-group">
-                        <button class="action-btn btn-rec" onclick="updateStatus('${voter.slNo}', 'received')">Received</button>
-                        <button class="action-btn btn-not" onclick="updateStatus('${voter.slNo}', 'not-received')">Not Recv</button>
                         <button class="action-btn btn-dead" onclick="updateStatus('${voter.slNo}', 'death')">Death</button>
                         <button class="action-btn btn-shift" onclick="updateStatus('${voter.slNo}', 'shifted')">Shifted</button>
                         <button class="action-btn btn-double" onclick="updateStatus('${voter.slNo}', 'double')">Double</button>
-                        ${houseBtn}
-                        ${epicBtn}
-                        ${mobileBtn}
-                        ${aadhaarBtn}
-                        ${oldPhotoBtn}
-                        ${newPhotoBtn}
-                        ${delOldPhotoBtn}
-                        ${delNewPhotoBtn}
-                    </div>`;
-            } else if (status === 'not-received') {
-                rowClass = 'row-not-received';
-                actionHtml = `
-                    <div class="action-group">
-                        <span class="status-badge badge-not-received">Not Received</span>
-                        <button class="action-btn btn-rec" onclick="updateStatus('${voter.slNo}', 'received')">Received</button>
-                        <button class="action-btn btn-dead" onclick="updateStatus('${voter.slNo}', 'death')">Death</button>
-                        <button class="action-btn btn-shift" onclick="updateStatus('${voter.slNo}', 'shifted')">Shifted</button>
-                        <button class="action-btn btn-double" onclick="updateStatus('${voter.slNo}', 'double')">Double</button>
-                        <button class="action-btn btn-reset" onclick="updateStatus('${voter.slNo}', 'active')">Undo</button>
                         ${houseBtn}
                         ${epicBtn}
                         ${mobileBtn}
@@ -1113,7 +1063,7 @@
                         ${delNewPhotoBtn}
                     </div>`;
             } else {
-                let badgeClass = "badge-received";
+                let badgeClass = "badge-death";
                 let badgeText = status.toUpperCase();
                 if (status === 'death') { badgeClass = "badge-death"; rowClass = "row-death"; badgeText = "DECEASED"; }
                 else if (status === 'shifted') { badgeClass = "badge-shifted"; rowClass = "row-shifted"; badgeText = "PERM SHIFTED"; }
@@ -1398,31 +1348,21 @@
 
         const counts = {
             active: list.filter(v => (v.status || 'active') === 'active').length,
-            received: list.filter(v => v.status === 'received').length,
-            'not-received': list.filter(v => v.status === 'not-received').length,
             death: list.filter(v => v.status === 'death').length,
             shifted: list.filter(v => v.status === 'shifted').length,
             double: list.filter(v => v.status === 'double').length,
             enrolled: list.filter(v => v.status === 'enrolled').length,
         };
 
-        const totalActioned = totalVoters - counts.active;
-        const progressPercentage = totalVoters > 0 ? Math.round((totalActioned / totalVoters) * 100) : 0;
-
         document.getElementById('countMale').innerText = maleCount;
         document.getElementById('countFemale').innerText = femaleCount;
         document.getElementById('countTotal').innerText = totalVoters;
 
-        document.getElementById('countReceived').innerText = counts.received;
-        document.getElementById('countPending').innerText = counts['not-received'];
         document.getElementById('countDeath').innerText = counts.death;
         document.getElementById('countShifted').innerText = counts.shifted;
         document.getElementById('countDouble').innerText = counts.double;
-        document.getElementById('countPercent').innerText = progressPercentage + '%';
 
         document.getElementById('tabCountActive').innerText = counts.active;
-        document.getElementById('tabCountRec').innerText = counts.received;
-        document.getElementById('tabCountNot').innerText = counts['not-received'];
         document.getElementById('tabCountDead').innerText = counts.death;
         document.getElementById('tabCountShift').innerText = counts.shifted;
         document.getElementById('tabCountDouble').innerText = counts.double;
