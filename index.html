@@ -341,7 +341,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 980px;
+            min-width: 1050px;
         }
 
         th {
@@ -418,6 +418,9 @@
         
         .action-btn.btn-house { background-color: #e6fffa; color: #234e52; border-color: #b2f5ea; }
         .action-btn.btn-house:hover { background-color: #319795; color: white; }
+
+        .action-btn.btn-epic { background-color: #feebc8; color: #7b341e; border-color: #fbd38d; }
+        .action-btn.btn-epic:hover { background-color: #dd6b20; color: white; }
 
         .action-btn.btn-mobile { background-color: #ebf8ff; color: #2b6cb0; border-color: #bee3f8; }
         .action-btn.btn-mobile:hover { background-color: #3182ce; color: white; }
@@ -589,6 +592,7 @@
                 <div class="input-group">
                     <input type="number" id="manualSlNo" class="input-field" placeholder="Sl. No. (e.g., 101)">
                     <input type="text" id="manualHouseNo" class="input-field" placeholder="House / Door No. (e.g., 12-3/A)">
+                    <input type="text" id="manualEpicNo" class="input-field" placeholder="EPIC / Voter ID No. (e.g., ABC1234567)">
                     <input type="text" id="manualName" class="input-field" placeholder="Voter's Full Name">
                     <input type="text" id="manualParent" class="input-field" placeholder="Parent's / Husband's Name">
                     <input type="text" id="manualMobile" class="input-field" placeholder="Mobile Number (10 Digits)" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'')">
@@ -607,11 +611,11 @@
                 <div class="input-group">
                     <div class="file-upload-box" onclick="document.getElementById('excelFileInput').click()">
                         <label class="file-upload-label" id="fileUploadLabel">Tap to Select Excel / CSV</label>
-                        <span style="font-size: 10px; color: var(--text-muted);">Cols: SlNo, HouseNo, Name, Relation_Name, Mobile, Aadhaar, Gender...</span>
+                        <span style="font-size: 10px; color: var(--text-muted);">Cols: SlNo, HouseNo, EpicNo, Name, Relation_Name, Mobile, Aadhaar, Gender...</span>
                         <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)">
                     </div>
-                    <p style="font-size: 10px; color: var(--text-muted); text-align: center;">Or paste text below (SlNo, HouseNo, Name, Parent, Mobile, Gender, Aadhaar):</p>
-                    <textarea id="bulkText" class="input-field" style="height: 50px; resize: none;" placeholder="102, 14-2/B, Ramesh Kumar, Suresh Kumar, 9876543210, Male, XXXX-XXXX-XXXX"></textarea>
+                    <p style="font-size: 10px; color: var(--text-muted); text-align: center;">Or paste text below (SlNo, HouseNo, EpicNo, Name, Parent, Mobile, Gender, Aadhaar):</p>
+                    <textarea id="bulkText" class="input-field" style="height: 50px; resize: none;" placeholder="102, 14-2/B, ABC1234567, Ramesh Kumar, Suresh Kumar, 9876543210, Male, XXXX-XXXX-XXXX"></textarea>
                     <button class="btn-add" onclick="addBulkVotersText()" style="background-color: var(--success);">Import Text Lines</button>
                 </div>
             </div>
@@ -620,7 +624,7 @@
 
     <div class="search-export-bar">
         <div class="search-box">
-            <input type="text" id="searchBar" class="search-input" placeholder="🔍 Search Sl, House No, Name, Mobile, Aadhaar..." onkeyup="filterVoters()">
+            <input type="text" id="searchBar" class="search-input" placeholder="🔍 Search Sl, House, EPIC, Name, Mobile, Aadhaar..." onkeyup="filterVoters()">
             <select id="filterGenderSelect" class="select-field" style="max-width: 110px;" onchange="filterVoters()">
                 <option value="All">All Genders</option>
                 <option value="Male">Male</option>
@@ -656,11 +660,12 @@
                         <th style="width: 4%;">Sl.</th>
                         <th style="width: 5%;">Old Photo</th>
                         <th style="width: 5%;">New Photo</th>
-                        <th style="width: 8%;">House No</th>
-                        <th style="width: 16%;">Voter Name</th>
-                        <th style="width: 14%;">Parent Name</th>
-                        <th style="width: 13%;">Mobile (Double Tap)</th>
-                        <th style="width: 12%;">Aadhaar</th>
+                        <th style="width: 7%;">House No</th>
+                        <th style="width: 9%;">EPIC No</th>
+                        <th style="width: 15%;">Voter Name</th>
+                        <th style="width: 13%;">Parent Name</th>
+                        <th style="width: 12%;">Mobile (Double Tap)</th>
+                        <th style="width: 11%;">Aadhaar</th>
                         <th style="width: 5%;">Gender</th>
                         <th style="width: 18%;">Status / Action</th>
                     </tr>
@@ -735,7 +740,7 @@
 
     window.voterStore = [];
 
-    // Realtime Sync Listener with Error Handling
+    // Realtime Sync Listener
     onValue(votersRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -759,7 +764,6 @@
         alert("Firebase Read Warning: " + error.message + "\nPlease check your Firebase Database Rules in console.");
     });
 
-    // Sync function to Realtime Database with catch block
     window.syncDatabase = function() {
         try {
             const dataObj = {};
@@ -829,13 +833,14 @@
         rows.forEach(row => {
             const slNo = row.cells[0] ? row.cells[0].innerText.toLowerCase() : '';
             const houseNo = row.cells[3] ? row.cells[3].innerText.toLowerCase() : '';
-            const name = row.cells[4] ? row.cells[4].innerText.toLowerCase() : '';
-            const parent = row.cells[5] ? row.cells[5].innerText.toLowerCase() : '';
-            const mobile = row.cells[6] ? row.cells[6].innerText.toLowerCase() : '';
-            const aadhaar = row.cells[7] ? row.cells[7].innerText.toLowerCase() : '';
-            const gender = row.cells[8] ? row.cells[8].innerText.trim() : '';
+            const epicNo = row.cells[4] ? row.cells[4].innerText.toLowerCase() : '';
+            const name = row.cells[5] ? row.cells[5].innerText.toLowerCase() : '';
+            const parent = row.cells[6] ? row.cells[6].innerText.toLowerCase() : '';
+            const mobile = row.cells[7] ? row.cells[7].innerText.toLowerCase() : '';
+            const aadhaar = row.cells[8] ? row.cells[8].innerText.toLowerCase() : '';
+            const gender = row.cells[9] ? row.cells[9].innerText.trim() : '';
 
-            const matchesText = slNo.includes(query) || houseNo.includes(query) || name.includes(query) || parent.includes(query) || mobile.includes(query) || aadhaar.includes(query);
+            const matchesText = slNo.includes(query) || houseNo.includes(query) || epicNo.includes(query) || name.includes(query) || parent.includes(query) || mobile.includes(query) || aadhaar.includes(query);
             const matchesGender = (genderFilter === 'All') || (gender.toLowerCase() === genderFilter.toLowerCase());
 
             if (matchesText && matchesGender) {
@@ -861,6 +866,20 @@
         
         if (newHouseNo !== null) {
             voter.houseNo = newHouseNo.trim() || '—';
+            renderAll();
+            if (typeof window.syncDatabase === 'function') window.syncDatabase();
+        }
+    }
+
+    function updateEpicNoOnly(slNo) {
+        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
+        if (!voter) return;
+
+        const currentVal = voter.epicNo && voter.epicNo !== '—' ? voter.epicNo : '';
+        const newEpicNo = prompt(`Enter EPIC / Voter ID No. for Sl. ${voter.slNo} (${voter.name}):`, currentVal);
+        
+        if (newEpicNo !== null) {
+            voter.epicNo = newEpicNo.trim().toUpperCase() || '—';
             renderAll();
             if (typeof window.syncDatabase === 'function') window.syncDatabase();
         }
@@ -922,10 +941,9 @@
         document.getElementById('modalCameraView').style.display = 'none';
     }
 
-    // Auto-Compress Image Canvas Helper (120px max size for database speed)
     function compressAndSavePhoto(imageSource) {
         const canvas = document.getElementById('cameraCanvas');
-        const maxDim = 120; // 120px thumbnail for lightweight DB sync
+        const maxDim = 120;
         let w = imageSource.width || 120;
         let h = imageSource.height || 120;
 
@@ -1048,6 +1066,7 @@
             const status = voter.status || 'active';
             
             const houseBtn = `<button class="action-btn btn-house" onclick="updateHouseNoOnly('${voter.slNo}')">🏠 House No</button>`;
+            const epicBtn = `<button class="action-btn btn-epic" onclick="updateEpicNoOnly('${voter.slNo}')">🆔 EPIC No</button>`;
             const mobileBtn = `<button class="action-btn btn-mobile" onclick="updateMobileOnly('${voter.slNo}')">📱 Mobile</button>`;
             const aadhaarBtn = `<button class="action-btn btn-aadhaar" onclick="updateAadhaarOnly('${voter.slNo}')">🆔 Aadhaar</button>`;
             
@@ -1066,6 +1085,7 @@
                         <button class="action-btn btn-shift" onclick="updateStatus('${voter.slNo}', 'shifted')">Shifted</button>
                         <button class="action-btn btn-double" onclick="updateStatus('${voter.slNo}', 'double')">Double</button>
                         ${houseBtn}
+                        ${epicBtn}
                         ${mobileBtn}
                         ${aadhaarBtn}
                         ${oldPhotoBtn}
@@ -1084,6 +1104,7 @@
                         <button class="action-btn btn-double" onclick="updateStatus('${voter.slNo}', 'double')">Double</button>
                         <button class="action-btn btn-reset" onclick="updateStatus('${voter.slNo}', 'active')">Undo</button>
                         ${houseBtn}
+                        ${epicBtn}
                         ${mobileBtn}
                         ${aadhaarBtn}
                         ${oldPhotoBtn}
@@ -1104,6 +1125,7 @@
                         <span class="status-badge ${badgeClass}">${badgeText}</span>
                         <button class="action-btn btn-reset" onclick="updateStatus('${voter.slNo}', 'active')">Undo</button>
                         ${houseBtn}
+                        ${epicBtn}
                         ${mobileBtn}
                         ${aadhaarBtn}
                         ${oldPhotoBtn}
@@ -1126,6 +1148,7 @@
                     <td>${oldPhotoCell}</td>
                     <td>${newPhotoCell}</td>
                     <td>${voter.houseNo || '—'}</td>
+                    <td><strong>${voter.epicNo || '—'}</strong></td>
                     <td>${voter.name}</td>
                     <td>${voter.parent}</td>
                     ${mobileCell}
@@ -1155,6 +1178,7 @@
     function addSingleVoter() {
         const slNo = document.getElementById('manualSlNo').value.trim();
         const houseNo = document.getElementById('manualHouseNo').value.trim() || '—';
+        const epicNo = document.getElementById('manualEpicNo').value.trim().toUpperCase() || '—';
         const name = document.getElementById('manualName').value.trim() || '—';
         const parent = document.getElementById('manualParent').value.trim() || '—';
         let mobile = document.getElementById('manualMobile').value.trim().replace(/\D/g, '');
@@ -1183,6 +1207,7 @@
 
         if (existingIdx !== -1) {
             if (houseNo !== '—') window.voterStore[existingIdx].houseNo = houseNo;
+            if (epicNo !== '—') window.voterStore[existingIdx].epicNo = epicNo;
             if (name !== '—') window.voterStore[existingIdx].name = name;
             if (parent !== '—') window.voterStore[existingIdx].parent = parent;
             if (mobile !== '—') window.voterStore[existingIdx].mobile = mobile;
@@ -1190,7 +1215,7 @@
             window.voterStore[existingIdx].gender = gender;
             alert(`Updated record for Serial Number ${slNo}.`);
         } else {
-            window.voterStore.push({ slNo, houseNo, name, parent, mobile, aadhaar, gender, status: 'active', oldPhoto: '', newPhoto: '' });
+            window.voterStore.push({ slNo, houseNo, epicNo, name, parent, mobile, aadhaar, gender, status: 'active', oldPhoto: '', newPhoto: '' });
             alert(`Added new voter (Sl. ${slNo}).`);
         }
 
@@ -1199,6 +1224,7 @@
 
         document.getElementById('manualSlNo').value = '';
         document.getElementById('manualHouseNo').value = '';
+        document.getElementById('manualEpicNo').value = '';
         document.getElementById('manualName').value = '';
         document.getElementById('manualParent').value = '';
         document.getElementById('manualMobile').value = '';
@@ -1252,6 +1278,7 @@
                     if (rawSlNo.endsWith('.0')) rawSlNo = rawSlNo.slice(0, -2);
 
                     const houseNo = row['houseno'] || row['house'] || row['doorno'] || row['hno'] || '—';
+                    const epicNo = row['epicno'] || row['epic'] || row['voterid'] || row['idnumber'] || '—';
                     const name = row['name'] || row['votername'] || row['fullname'] || row['membername'] || row['epicname'] || '—';
                     const parent = row['relationname'] || row['parentname'] || row['husbandname'] || row['fathername'] || row['relation'] || row['parent'] || '—';
                     let mobile = row['mobile'] || row['mobilenumber'] || row['phone'] || row['cell'] || '—';
@@ -1267,6 +1294,7 @@
 
                         if (existingIdx !== -1) {
                             if (houseNo !== '—') window.voterStore[existingIdx].houseNo = houseNo;
+                            if (epicNo !== '—') window.voterStore[existingIdx].epicNo = epicNo;
                             if (name !== '—') window.voterStore[existingIdx].name = name;
                             if (parent !== '—') window.voterStore[existingIdx].parent = parent;
                             if (mobile !== '—' && mobile.length === 10) window.voterStore[existingIdx].mobile = mobile;
@@ -1277,6 +1305,7 @@
                             window.voterStore.push({
                                 slNo: slNoStr,
                                 houseNo,
+                                epicNo: epicNo !== '—' ? epicNo.toUpperCase() : '—',
                                 name,
                                 parent,
                                 mobile: mobile.length === 10 ? mobile : '—',
@@ -1322,22 +1351,25 @@
             
             const slNo = pieces[0] ? pieces[0].trim() : '';
             const houseNo = pieces[1] ? pieces[1].trim() : '—';
-            const name = pieces[2] ? pieces[2].trim() : '—';
-            const parent = pieces[3] ? pieces[3].trim() : '—';
-            let mobile = pieces[4] ? pieces[4].trim().replace(/\D/g, '') : '—';
-            const gender = parseGender(pieces[5]);
-            let aadhaar = pieces[6] ? pieces[6].trim().replace(/\D/g, '') : '—';
+            const epicNo = pieces[2] ? pieces[2].trim().toUpperCase() : '—';
+            const name = pieces[3] ? pieces[3].trim() : '—';
+            const parent = pieces[4] ? pieces[4].trim() : '—';
+            let mobile = pieces[5] ? pieces[5].trim().replace(/\D/g, '') : '—';
+            const gender = parseGender(pieces[6]);
+            let aadhaar = pieces[7] ? pieces[7].trim().replace(/\D/g, '') : '—';
 
             if(slNo) {
                 const existingIdx = (window.voterStore || []).findIndex(v => String(v.slNo) === String(slNo));
                 if (existingIdx !== -1) {
                     if (houseNo !== '—') window.voterStore[existingIdx].houseNo = houseNo;
+                    if (epicNo !== '—') window.voterStore[existingIdx].epicNo = epicNo;
                     if (mobile.length === 10) window.voterStore[existingIdx].mobile = mobile;
                     if (aadhaar.length === 12) window.voterStore[existingIdx].aadhaar = aadhaar;
                 } else {
                     window.voterStore.push({ 
                         slNo, 
                         houseNo,
+                        epicNo,
                         name, 
                         parent, 
                         mobile: mobile.length === 10 ? mobile : '—', 
@@ -1421,6 +1453,7 @@
                         <tr>
                             <th>Serial No.</th>
                             <th>House / Door No.</th>
+                            <th>EPIC No.</th>
                             <th>Voter Name</th>
                             <th>Parent / Husband Name</th>
                             <th>Mobile Number</th>
@@ -1439,6 +1472,7 @@
                 <tr>
                     <td>${voter.slNo}</td>
                     <td>${voter.houseNo || '—'}</td>
+                    <td>${voter.epicNo || '—'}</td>
                     <td>${voter.name}</td>
                     <td>${voter.parent}</td>
                     <td>${voter.mobile || '—'}</td>
