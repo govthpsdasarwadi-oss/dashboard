@@ -623,7 +623,7 @@
                         <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)">
                     </div>
                     <p style="font-size: 10px; color: var(--text-muted); text-align: center;">Or paste text below (SlNo, HouseNo, Name, Parent, Mobile, Gender, Aadhaar):</p>
-                    <textarea id="bulkText" class="input-field" style="height: 50px; resize: none;" placeholder="102, 14-2/B, Ramesh Kumar, Suresh Kumar, 9876543210, Male, 123456789012"></textarea>
+                    <textarea id="bulkText" class="input-field" style="height: 50px; resize: none;" placeholder="102, 14-2/B, Ramesh Kumar, Suresh Kumar, 9876543210, Male, XXXX-XXXX-XXXX"></textarea>
                     <button class="btn-add" onclick="addBulkVotersText()" style="background-color: var(--success);">Import Text Lines</button>
                 </div>
             </div>
@@ -754,7 +754,7 @@
 
     window.voterStore = [];
 
-    // Realtime Listener
+    // Optimized Multi-Device Realtime Listener
     onValue(votersRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -762,8 +762,14 @@
         } else {
             window.voterStore = [];
         }
+        
+        // Ensure rendering triggers reliably across devices
         if (typeof window.renderAll === 'function') {
             window.renderAll();
+        } else {
+            window.addEventListener('DOMContentLoaded', () => {
+                if (typeof window.renderAll === 'function') window.renderAll();
+            });
         }
     });
 
