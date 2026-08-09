@@ -454,7 +454,6 @@
         .tab-content { display: none; }
         .tab-content.active { display: table-row-group; }
 
-        /* Modal Overlay Styles */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -484,7 +483,6 @@
         .modal-btn.success { background: var(--success); color: white; }
         .modal-btn.danger { background: var(--danger); color: white; }
 
-        /* Lightbox Image View Popup Styles */
         .photo-view-box {
             text-align: center;
             display: flex;
@@ -509,7 +507,6 @@
             display: inline-block;
         }
 
-        /* PRINT / PDF STYLES */
         @media print {
             body { background: white; padding: 0; }
             .toggle-container, .collapsible-dashboard-panel, .tabs-container, .search-export-bar, th:last-child, td:last-child {
@@ -533,7 +530,6 @@
         <span class="sync-badge" id="syncStatus">⚡ Firebase Live Sync Connected</span>
     </header>
 
-    <!-- Dropdown Toggle Control Box -->
     <div class="toggle-container">
         <button class="btn-toggle-panel" onclick="toggleAddPanel()">
             <span>➕ Voter Input & Metrics Dashboard</span>
@@ -541,10 +537,7 @@
         </button>
     </div>
 
-    <!-- TOGGLEABLE CONTAINER: DASHBOARD METRICS + ENTRY FORMS -->
     <div class="collapsible-dashboard-panel" id="voterEntryPanel">
-        
-        <!-- Gender Distribution Section -->
         <section class="gender-grid">
             <div class="summary-card male">
                 <div class="summary-label">Male Voters</div>
@@ -560,7 +553,6 @@
             </div>
         </section>
 
-        <!-- Verification Status Metrics -->
         <section class="summary-grid">
             <div class="summary-card received">
                 <div class="summary-label">Received</div>
@@ -576,7 +568,6 @@
             </div>
         </section>
         
-        <!-- Auto-Calculated Shifted / Death / Double Voters -->
         <section class="summary-sub-grid">
             <div class="summary-card death">
                 <div class="summary-label">Auto Death</div>
@@ -592,9 +583,7 @@
             </div>
         </section>
 
-        <!-- Entry Panels -->
         <div class="entry-container">
-            <!-- SINGLE ENTRY / UPDATE FORM -->
             <div class="panel">
                 <h2 class="panel-title">Add / Update Single Voter</h2>
                 <div class="input-group">
@@ -613,7 +602,6 @@
                 </div>
             </div>
 
-            <!-- BULK EXCEL UPLOAD FORM -->
             <div class="panel">
                 <h2 class="panel-title">📁 Upload Excel File</h2>
                 <div class="input-group">
@@ -630,7 +618,6 @@
         </div>
     </div>
 
-    <!-- SEARCH & EXPORT ACTION BAR -->
     <div class="search-export-bar">
         <div class="search-box">
             <input type="text" id="searchBar" class="search-input" placeholder="🔍 Search Sl, House No, Name, Mobile, Aadhaar..." onkeyup="filterVoters()">
@@ -649,7 +636,6 @@
         </div>
     </div>
 
-    <!-- Navigation Tabs -->
     <div class="tabs-container">
         <div class="tabs-nav">
             <button class="tab-btn active" onclick="switchTab('active')">Active (<span id="tabCountActive">0</span>)</button>
@@ -662,7 +648,6 @@
         </div>
     </div>
 
-    <!-- Grid Display Table -->
     <div class="table-panel">
         <div class="table-responsive">
             <table id="mainVoterTable">
@@ -693,7 +678,6 @@
     </div>
 </div>
 
-<!-- Modal Popup for Camera & Photo Upload -->
 <div class="modal-overlay" id="photoModal">
     <div class="modal-card">
         <div class="modal-title" id="photoModalTitle">Manage Voter Photo</div>
@@ -715,7 +699,6 @@
     </div>
 </div>
 
-<!-- Lightbox Modal for Viewing Photo Details & Size -->
 <div class="modal-overlay" id="viewPhotoModal">
     <div class="modal-card">
         <div class="modal-title" id="viewPhotoTitle">Voter Photo Preview</div>
@@ -736,7 +719,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAQZu-uf-S4NccvuO6Zgm_b5irREW_MaQs",
       authDomain: "voty-4df98.firebaseapp.com",
@@ -747,33 +729,37 @@
       appId: "1:687683066956:web:88c1c0422d92c7457e28e9"
     };
 
-    // Initialize Firebase Realtime Database
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const votersRef = ref(db, 'voters');
 
     window.voterStore = [];
 
-    // Optimized Multi-Device Realtime Listener
+    // Realtime Sync Listener with Error Handling
     onValue(votersRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
             window.voterStore = Object.values(data);
+            const statusBadge = document.getElementById('syncStatus');
+            if(statusBadge) statusBadge.innerText = '⚡ Firebase Live Sync Connected';
         } else {
             window.voterStore = [];
         }
         
-        // Ensure rendering triggers reliably across devices
         if (typeof window.renderAll === 'function') {
             window.renderAll();
-        } else {
-            window.addEventListener('DOMContentLoaded', () => {
-                if (typeof window.renderAll === 'function') window.renderAll();
-            });
         }
+    }, (error) => {
+        console.error("Firebase Sync Error:", error);
+        const statusBadge = document.getElementById('syncStatus');
+        if(statusBadge) {
+            statusBadge.innerText = '⚠️ Sync Blocked (Check Rules)';
+            statusBadge.style.background = '#e53e3e';
+        }
+        alert("Firebase Read Warning: " + error.message + "\nPlease check your Firebase Database Rules in console.");
     });
 
-    // Write / Sync function to Realtime Database
+    // Sync function to Realtime Database with catch block
     window.syncDatabase = function() {
         try {
             const dataObj = {};
@@ -781,7 +767,10 @@
                 const cleanKey = String(voter.slNo).replace(/[.\#\$\[\]]/g, '_');
                 dataObj[cleanKey] = voter;
             });
-            set(votersRef, dataObj);
+            set(votersRef, dataObj).catch((error) => {
+                console.error("Firebase Write Error:", error);
+                alert("⚠️ Firebase Write Failed: " + error.message + "\nYour Security Rules in Firebase Console might be blocking updates!");
+            });
         } catch(e) {
             console.error("Firebase Sync Warning:", e);
         }
@@ -789,16 +778,19 @@
 
     window.clearAllData = function() {
         if (confirm("Are you sure you want to clear ALL voter records from the live Firebase database?")) {
-            remove(votersRef);
-            window.voterStore = [];
-            window.renderAll();
+            remove(votersRef).then(() => {
+                window.voterStore = [];
+                window.renderAll();
+            }).catch(err => {
+                alert("Failed to clear Firebase DB: " + err.message);
+            });
         }
     };
 </script>
 
 <script>
     let activeVoterForPhoto = null;
-    let activePhotoType = 'newPhoto'; // 'oldPhoto' or 'newPhoto'
+    let activePhotoType = 'newPhoto';
     let cameraStream = null;
 
     function toggleAddPanel() {
@@ -854,14 +846,12 @@
         });
     }
 
-    // Phone Call Trigger
     function callMobile(mobileNum) {
         if (mobileNum && mobileNum !== '—') {
             window.location.href = `tel:${mobileNum}`;
         }
     }
 
-    // Update House Number Only Function
     function updateHouseNoOnly(slNo) {
         const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
         if (!voter) return;
@@ -876,7 +866,6 @@
         }
     }
 
-    // Photo Management Engine
     function openPhotoModal(slNo, photoType) {
         activeVoterForPhoto = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
         if (!activeVoterForPhoto) return;
@@ -933,21 +922,36 @@
         document.getElementById('modalCameraView').style.display = 'none';
     }
 
-    function capturePhoto() {
-        const video = document.getElementById('cameraVideo');
+    // Auto-Compress Image Canvas Helper (120px max size for database speed)
+    function compressAndSavePhoto(imageSource) {
         const canvas = document.getElementById('cameraCanvas');
-        canvas.width = 300;
-        canvas.height = 300;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, 300, 300);
+        const maxDim = 120; // 120px thumbnail for lightweight DB sync
+        let w = imageSource.width || 120;
+        let h = imageSource.height || 120;
 
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        if (w > h) {
+            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+        } else {
+            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(imageSource, 0, 0, w, h);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
         if (activeVoterForPhoto) {
             activeVoterForPhoto[activePhotoType] = dataUrl;
             renderAll();
             if (typeof window.syncDatabase === 'function') window.syncDatabase();
         }
         closePhotoModal();
+    }
+
+    function capturePhoto() {
+        const video = document.getElementById('cameraVideo');
+        compressAndSavePhoto(video);
     }
 
     function handlePhotoFileSelected(e) {
@@ -958,19 +962,7 @@
         reader.onload = function(evt) {
             const img = new Image();
             img.onload = function() {
-                const canvas = document.getElementById('cameraCanvas');
-                canvas.width = 300;
-                canvas.height = 300;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, 300, 300);
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
-                if (activeVoterForPhoto) {
-                    activeVoterForPhoto[activePhotoType] = dataUrl;
-                    renderAll();
-                    if (typeof window.syncDatabase === 'function') window.syncDatabase();
-                }
-                closePhotoModal();
+                compressAndSavePhoto(img);
             };
             img.src = evt.target.result;
         };
@@ -993,7 +985,7 @@
 
         const tempImg = new Image();
         tempImg.onload = function() {
-            detailsBadge.innerHTML = `📏 Size: <strong>${sizeInKB} KB</strong> &nbsp;|&nbsp; 📐 Resolution: <strong>${tempImg.width} × ${tempImg.height} px</strong>`;
+            detailsBadge.innerHTML = `📏 Size: <strong>${sizeInKB} KB</strong> &nbsp;|&nbsp; 📐 Res: <strong>${tempImg.width} × ${tempImg.height} px</strong>`;
         };
         tempImg.src = photoDataUrl;
 
@@ -1385,12 +1377,10 @@
         const totalActioned = totalVoters - counts.active;
         const progressPercentage = totalVoters > 0 ? Math.round((totalActioned / totalVoters) * 100) : 0;
 
-        // Gender stats
         document.getElementById('countMale').innerText = maleCount;
         document.getElementById('countFemale').innerText = femaleCount;
         document.getElementById('countTotal').innerText = totalVoters;
 
-        // Action stats
         document.getElementById('countReceived').innerText = counts.received;
         document.getElementById('countPending').innerText = counts['not-received'];
         document.getElementById('countDeath').innerText = counts.death;
@@ -1398,7 +1388,6 @@
         document.getElementById('countDouble').innerText = counts.double;
         document.getElementById('countPercent').innerText = progressPercentage + '%';
 
-        // Tab counters
         document.getElementById('tabCountActive').innerText = counts.active;
         document.getElementById('tabCountRec').innerText = counts.received;
         document.getElementById('tabCountNot').innerText = counts['not-received'];
@@ -1408,7 +1397,6 @@
         document.getElementById('tabCountEnroll').innerText = counts.enrolled;
     }
 
-    // EXPORT ALL DETAILS TO EXCEL
     function exportToExcel() {
         const list = window.voterStore || [];
         if(list.length === 0) {
@@ -1474,7 +1462,6 @@
         document.body.removeChild(link);
     }
 
-    // EXPORT PDF / PRINT
     function exportToPDF() {
         window.print();
     }
