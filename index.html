@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dasarwadi Voters Dashboard </title>
+    <title>Dasarwadi Voters Dashboard</title>
     
     <!-- SheetJS CDN for parsing Excel files -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -42,12 +42,86 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
+        /* --- OTP Authentication Overlay --- */
+        #authOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .auth-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 16px;
+            margin-bottom: 12px;
+            outline: none;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .auth-btn:hover { background: var(--primary-hover); }
+        .auth-btn:disabled { background: #a0aec0; cursor: not-allowed; }
+
+        .auth-error {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 8px;
+            min-height: 16px;
+            font-weight: 600;
+        }
+
+        /* --- Dashboard Container --- */
         .container {
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
+            display: none;
         }
 
         header {
@@ -57,11 +131,31 @@
             border-radius: 8px;
             margin-bottom: 10px;
             text-align: center;
+            position: relative;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         header h1 { font-size: 18px; font-weight: 700; }
         header p { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+
+        .header-actions {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover { background: var(--danger); border-color: var(--danger); }
 
         .sync-badge {
             display: inline-block;
@@ -364,7 +458,6 @@
             word-wrap: break-word;
         }
 
-        /* Direct Under-Content Layout Container */
         .cell-content-box {
             display: flex;
             flex-direction: column;
@@ -469,6 +562,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: table-row-group; }
 
+        /* Modal Styles */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -484,19 +578,63 @@
             border-radius: 8px;
             padding: 16px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
         .modal-title { font-size: 14px; font-weight: bold; color: var(--primary); text-align: center; }
-        .video-preview { width: 100%; height: 220px; background: #000; border-radius: 6px; object-fit: cover; }
+        .video-preview { width: 100%; height: 240px; background: #000; border-radius: 6px; object-fit: cover; }
         .modal-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         .modal-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-align: center; }
         .modal-btn.primary { background: var(--primary); color: white; }
         .modal-btn.success { background: var(--success); color: white; }
         .modal-btn.danger { background: var(--danger); color: white; }
+
+        /* Interactive Crop Modal Styles */
+        .crop-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background: #111;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            touch-action: none;
+        }
+        #cropCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: move;
+        }
+        .crop-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 0;
+        }
+        .crop-controls label {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+        .crop-controls input[type="range"] {
+            flex: 1;
+        }
+        .zoom-btn {
+            background: #e2e8f0;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
         .photo-view-box {
             text-align: center;
@@ -524,10 +662,10 @@
 
         @media print {
             body { background: white; padding: 0; }
-            .toggle-container, .collapsible-dashboard-panel, .tabs-container, .search-export-bar, th:last-child, td:last-child, .action-btn {
+            #authOverlay, .toggle-container, .collapsible-dashboard-panel, .tabs-container, .search-export-bar, th:last-child, td:last-child, .action-btn {
                 display: none !important;
             }
-            .container { max-width: 100%; }
+            .container { max-width: 100%; display: block !important; }
             .table-panel { box-shadow: none; padding: 0; }
             .tab-content { display: table-row-group !important; }
             table { min-width: 100%; font-size: 10px; }
@@ -538,11 +676,37 @@
 </head>
 <body>
 
-<div class="container">
+<!-- OTP Authentication Lock Screen (Strictly for +917019400321) -->
+<div id="authOverlay">
+    <div class="auth-card">
+        <h2>🔒 BLO Login</h2>
+        <p>Access restricted to registered BLO phone number only.</p>
+
+        <!-- Step 1: Phone input -->
+        <div id="phoneStep">
+            <input type="tel" id="userPhoneNumber" class="auth-input" value="+917019400321" readonly style="background-color: #f7fafc; font-weight: bold; color: var(--primary);">
+            <div id="recaptchaContainer" style="margin: 10px 0; display: flex; justify-content: center;"></div>
+            <button class="auth-btn" id="sendOtpBtn" onclick="requestOtp()">Send Verification OTP</button>
+        </div>
+
+        <!-- Step 2: OTP verification -->
+        <div id="otpStep" style="display: none;">
+            <input type="text" id="userOtpCode" class="auth-input" placeholder="Enter 6-Digit OTP" maxlength="6">
+            <button class="auth-btn" id="verifyOtpBtn" onclick="confirmOtp()">Verify & Open Dashboard</button>
+        </div>
+
+        <div id="authErrorMsg" class="auth-error"></div>
+    </div>
+</div>
+
+<div class="container" id="dashboardContainer">
     <header>
-        <h1>BLO Field Assistant</h1>
+        <h1>Dasarwadi Voters Dashboard</h1>
         <p>Voter Management & Field Verification</p>
         <span class="sync-badge" id="syncStatus">⚡ Firebase Live Sync Connected</span>
+        <div class="header-actions">
+            <button class="btn-logout" onclick="logoutBLO()">Logout</button>
+        </div>
     </header>
 
     <div class="toggle-container">
@@ -617,7 +781,7 @@
                         <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)">
                     </div>
                     <p style="font-size: 10px; color: var(--text-muted); text-align: center;">Or paste text below (SlNo, HouseNo, EpicNo, DOB, Name, Parent, Mobile, Gender, Aadhaar):</p>
-                    <textarea id="bulkText" class="input-field" style="height: 50px; resize: none;" placeholder="102, 14-2/B, ABC1234567, 1990-05-15, Ramesh Kumar, Suresh Kumar, 9876543210, Male, XXXX-XXXX-XXXX"></textarea>
+                    <textarea id="bulkText" class="input-field" style="height: 50px; resize: none;" placeholder="102, 14-2/B, ABC1234567, 1990-05-15, Ramesh Kumar, Suresh Kumar, 9876543210, Male, [Aadhaar Redacted]"></textarea>
                     <button class="btn-add" onclick="addBulkVotersText()" style="background-color: var(--success);">Import Text Lines</button>
                 </div>
             </div>
@@ -684,12 +848,12 @@
     </div>
 </div>
 
+<!-- Upload / Camera Initial Selection Modal -->
 <div class="modal-overlay" id="photoModal">
     <div class="modal-card">
         <div class="modal-title" id="photoModalTitle">Manage Voter Photo</div>
         
         <video id="cameraVideo" class="video-preview" style="display:none;" autoplay playsinline></video>
-        <canvas id="cameraCanvas" style="display:none;"></canvas>
         <input type="file" id="voterPhotoFileInput" accept="image/*" style="display:none;" onchange="handlePhotoFileSelected(event)">
 
         <div class="modal-actions" id="modalChoiceView">
@@ -699,12 +863,36 @@
         </div>
 
         <div class="modal-actions" id="modalCameraView" style="display:none;">
-            <button class="modal-btn success" onclick="capturePhoto()">📸 Snap Picture</button>
+            <button class="modal-btn success" onclick="capturePhotoForCrop()">📸 Snap Picture</button>
             <button class="modal-btn danger" onclick="stopCamera()">Cancel</button>
         </div>
     </div>
 </div>
 
+<!-- Interactive Square Crop Modal -->
+<div class="modal-overlay" id="cropModal">
+    <div class="modal-card" style="max-width: 380px;">
+        <div class="modal-title">Adjust & Fit Photo in Selection</div>
+        <p style="font-size: 11px; color: var(--text-muted); text-align: center;">Drag to center the face, use slider to zoom.</p>
+        
+        <div class="crop-container" id="cropBoxContainer">
+            <canvas id="cropCanvas" width="340" height="280"></canvas>
+        </div>
+
+        <div class="crop-controls">
+            <button class="zoom-btn" onclick="adjustZoom(-0.1)">−</button>
+            <input type="range" id="cropZoomSlider" min="0.5" max="3" step="0.05" value="1" oninput="handleZoomChange(this.value)">
+            <button class="zoom-btn" onclick="adjustZoom(0.1)">+</button>
+        </div>
+
+        <div class="modal-actions">
+            <button class="modal-btn success" onclick="saveCroppedPhoto()">✂️ Crop & Save Photo</button>
+            <button class="modal-btn danger" onclick="closeCropModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Full Photo Preview Modal -->
 <div class="modal-overlay" id="viewPhotoModal">
     <div class="modal-card">
         <div class="modal-title" id="viewPhotoTitle">Voter Photo Preview</div>
@@ -724,6 +912,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAQZu-uf-S4NccvuO6Zgm_b5irREW_MaQs",
@@ -735,35 +924,138 @@
       appId: "1:687683066956:web:88c1c0422d92c7457e28e9"
     };
 
+    const AUTHORIZED_PHONE = "+917019400321";
+
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
     const votersRef = ref(db, 'voters');
 
     window.voterStore = [];
+    let confirmationResult = null;
 
-    // Realtime Sync Listener
-    onValue(votersRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            window.voterStore = Object.values(data);
-            const statusBadge = document.getElementById('syncStatus');
-            if(statusBadge) statusBadge.innerText = '⚡ Firebase Live Sync Connected';
+    function setupRecaptcha() {
+        if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptchaContainer', {
+                'size': 'invisible'
+            });
+        }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user && (user.phoneNumber === AUTHORIZED_PHONE || user.phoneNumber === "+917019400321")) {
+            document.getElementById('authOverlay').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'block';
+            initDatabaseListener();
         } else {
-            window.voterStore = [];
+            if (user && user.phoneNumber !== AUTHORIZED_PHONE) {
+                signOut(auth);
+                alert("Unauthorized Phone Number. Access Denied.");
+            }
+            document.getElementById('authOverlay').style.display = 'flex';
+            document.getElementById('dashboardContainer').style.display = 'none';
+            document.getElementById('phoneStep').style.display = 'block';
+            document.getElementById('otpStep').style.display = 'none';
+            setupRecaptcha();
         }
-        
-        if (typeof window.renderAll === 'function') {
-            window.renderAll();
-        }
-    }, (error) => {
-        console.error("Firebase Sync Error:", error);
-        const statusBadge = document.getElementById('syncStatus');
-        if(statusBadge) {
-            statusBadge.innerText = '⚠️ Sync Blocked (Check Rules)';
-            statusBadge.style.background = '#e53e3e';
-        }
-        alert("Firebase Read Warning: " + error.message + "\nPlease check your Firebase Database Rules in console.");
     });
+
+    window.requestOtp = function() {
+        const rawPhone = document.getElementById('userPhoneNumber').value.trim();
+        const err = document.getElementById('authErrorMsg');
+        err.innerText = '';
+
+        let formattedPhone = rawPhone;
+        if (!formattedPhone.startsWith("+")) {
+            formattedPhone = "+91" + formattedPhone.replace(/\D/g, '');
+        }
+
+        if (formattedPhone !== AUTHORIZED_PHONE) {
+            err.innerText = 'Access Denied: Only +917019400321 is authorized to access this dashboard.';
+            return;
+        }
+
+        const btn = document.getElementById('sendOtpBtn');
+        btn.disabled = true;
+        btn.innerText = 'Sending OTP...';
+
+        setupRecaptcha();
+        const appVerifier = window.recaptchaVerifier;
+
+        signInWithPhoneNumber(auth, formattedPhone, appVerifier)
+            .then((result) => {
+                confirmationResult = result;
+                document.getElementById('phoneStep').style.display = 'none';
+                document.getElementById('otpStep').style.display = 'block';
+                btn.disabled = false;
+                btn.innerText = 'Send Verification OTP';
+            })
+            .catch((error) => {
+                err.innerText = error.message;
+                btn.disabled = false;
+                btn.innerText = 'Send Verification OTP';
+                if (window.recaptchaVerifier) {
+                    window.recaptchaVerifier.render().then(widgetId => {
+                        grecaptcha.reset(widgetId);
+                    });
+                }
+            });
+    };
+
+    window.confirmOtp = function() {
+        const otp = document.getElementById('userOtpCode').value.trim();
+        const err = document.getElementById('authErrorMsg');
+        err.innerText = '';
+
+        if (!otp || otp.length < 6) {
+            err.innerText = 'Please enter the complete 6-digit OTP.';
+            return;
+        }
+
+        const btn = document.getElementById('verifyOtpBtn');
+        btn.disabled = true;
+        btn.innerText = 'Verifying...';
+
+        confirmationResult.confirm(otp)
+            .then((result) => {
+                // Logged in successfully
+            })
+            .catch((error) => {
+                err.innerText = 'Invalid OTP: ' + error.message;
+                btn.disabled = false;
+                btn.innerText = 'Verify & Open Dashboard';
+            });
+    };
+
+    window.logoutBLO = function() {
+        if (confirm("Are you sure you want to log out?")) {
+            signOut(auth);
+        }
+    };
+
+    function initDatabaseListener() {
+        onValue(votersRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                window.voterStore = Object.values(data);
+                const statusBadge = document.getElementById('syncStatus');
+                if(statusBadge) statusBadge.innerText = '⚡ Firebase Live Sync Connected';
+            } else {
+                window.voterStore = [];
+            }
+            
+            if (typeof window.renderAll === 'function') {
+                window.renderAll();
+            }
+        }, (error) => {
+            console.error("Firebase Sync Error:", error);
+            const statusBadge = document.getElementById('syncStatus');
+            if(statusBadge) {
+                statusBadge.innerText = '⚠️ Sync Blocked';
+                statusBadge.style.background = '#e53e3e';
+            }
+        });
+    }
 
     window.syncDatabase = function() {
         try {
@@ -774,7 +1066,7 @@
             });
             set(votersRef, dataObj).catch((error) => {
                 console.error("Firebase Write Error:", error);
-                alert("⚠️ Firebase Write Failed: " + error.message + "\nYour Security Rules in Firebase Console might be blocking updates!");
+                alert("⚠️ Firebase Write Failed: " + error.message);
             });
         } catch(e) {
             console.error("Firebase Sync Warning:", e);
@@ -797,6 +1089,18 @@
     let activeVoterForPhoto = null;
     let activePhotoType = 'newPhoto';
     let cameraStream = null;
+
+    // Crop State variables
+    let sourceImageObj = new Image();
+    let cropScale = 1;
+    let cropBaseScale = 1;
+    let cropOffsetX = 0;
+    let cropOffsetY = 0;
+    let isDraggingCrop = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    const CROP_BOX_SIZE = 200; // Square target box size
 
     function toggleAddPanel() {
         const panel = document.getElementById('voterEntryPanel');
@@ -918,7 +1222,6 @@
     function closePhotoModal() {
         stopCamera();
         document.getElementById('photoModal').style.display = 'none';
-        activeVoterForPhoto = null;
     }
 
     function deleteVoterPhoto(slNo, photoType) {
@@ -957,35 +1260,18 @@
         document.getElementById('modalCameraView').style.display = 'none';
     }
 
-    function compressAndSavePhoto(imageSource) {
-        const canvas = document.getElementById('cameraCanvas');
-        const maxDim = 120;
-        let w = imageSource.width || 120;
-        let h = imageSource.height || 120;
-
-        if (w > h) {
-            if (w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
-        } else {
-            if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
-        }
-
-        canvas.width = w;
-        canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(imageSource, 0, 0, w, h);
-
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-        if (activeVoterForPhoto) {
-            activeVoterForPhoto[activePhotoType] = dataUrl;
-            renderAll();
-            if (typeof window.syncDatabase === 'function') window.syncDatabase();
-        }
-        closePhotoModal();
-    }
-
-    function capturePhoto() {
+    function capturePhotoForCrop() {
         const video = document.getElementById('cameraVideo');
-        compressAndSavePhoto(video);
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = video.videoWidth || 640;
+        offCanvas.height = video.videoHeight || 480;
+        const ctx = offCanvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, offCanvas.width, offCanvas.height);
+        
+        const dataUrl = offCanvas.toDataURL('image/jpeg', 0.9);
+        stopCamera();
+        closePhotoModal();
+        openCropModal(dataUrl);
     }
 
     function handlePhotoFileSelected(e) {
@@ -994,14 +1280,179 @@
 
         const reader = new FileReader();
         reader.onload = function(evt) {
-            const img = new Image();
-            img.onload = function() {
-                compressAndSavePhoto(img);
-            };
-            img.src = evt.target.result;
+            closePhotoModal();
+            openCropModal(evt.target.result);
         };
         reader.readAsDataURL(file);
         e.target.value = '';
+    }
+
+    /* --- Interactive Cropper Engine --- */
+    function openCropModal(imgSrc) {
+        const canvas = document.getElementById('cropCanvas');
+        const container = document.getElementById('cropBoxContainer');
+        canvas.width = container.clientWidth || 340;
+        canvas.height = container.clientHeight || 280;
+
+        sourceImageObj = new Image();
+        sourceImageObj.onload = function() {
+            // Calculate base scale to fit the photo inside the square crop box
+            const scaleX = CROP_BOX_SIZE / sourceImageObj.width;
+            const scaleY = CROP_BOX_SIZE / sourceImageObj.height;
+            cropBaseScale = Math.max(scaleX, scaleY);
+            
+            cropScale = 1;
+            cropOffsetX = canvas.width / 2;
+            cropOffsetY = canvas.height / 2;
+
+            document.getElementById('cropZoomSlider').value = 1;
+            document.getElementById('cropModal').style.display = 'flex';
+            drawCropPreview();
+            initCropTouchEvents();
+        };
+        sourceImageObj.src = imgSrc;
+    }
+
+    function closeCropModal() {
+        document.getElementById('cropModal').style.display = 'none';
+    }
+
+    function drawCropPreview() {
+        const canvas = document.getElementById('cropCanvas');
+        const ctx = canvas.getContext('2d');
+        const cw = canvas.width;
+        const ch = canvas.height;
+
+        ctx.clearRect(0, 0, cw, ch);
+
+        // 1. Draw scaled and translated image
+        ctx.save();
+        ctx.translate(cropOffsetX, cropOffsetY);
+        const currentScale = cropBaseScale * cropScale;
+        ctx.scale(currentScale, currentScale);
+        ctx.drawImage(sourceImageObj, -sourceImageObj.width / 2, -sourceImageObj.height / 2);
+        ctx.restore();
+
+        // 2. Draw Dark Overlay & Highlight Square Crop Box
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        const boxX = (cw - CROP_BOX_SIZE) / 2;
+        const boxY = (ch - CROP_BOX_SIZE) / 2;
+
+        ctx.beginPath();
+        // Outer rectangle
+        ctx.rect(0, 0, cw, ch);
+        // Cut out square crop hole
+        ctx.rect(boxX + CROP_BOX_SIZE, boxY, -CROP_BOX_SIZE, CROP_BOX_SIZE);
+        ctx.fill();
+
+        // 3. Draw border and guide grid around crop box
+        ctx.strokeStyle = '#2b6cb0';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(boxX, boxY, CROP_BOX_SIZE, CROP_BOX_SIZE);
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        // 3x3 grid lines
+        ctx.moveTo(boxX + CROP_BOX_SIZE / 3, boxY);
+        ctx.lineTo(boxX + CROP_BOX_SIZE / 3, boxY + CROP_BOX_SIZE);
+        ctx.moveTo(boxX + (2 * CROP_BOX_SIZE) / 3, boxY);
+        ctx.lineTo(boxX + (2 * CROP_BOX_SIZE) / 3, boxY + CROP_BOX_SIZE);
+        ctx.moveTo(boxX, boxY + CROP_BOX_SIZE / 3);
+        ctx.lineTo(boxX + CROP_BOX_SIZE, boxY + CROP_BOX_SIZE / 3);
+        ctx.moveTo(boxX, boxY + (2 * CROP_BOX_SIZE) / 3);
+        ctx.lineTo(boxX + CROP_BOX_SIZE, boxY + (2 * CROP_BOX_SIZE) / 3);
+        ctx.stroke();
+    }
+
+    function handleZoomChange(val) {
+        cropScale = parseFloat(val);
+        drawCropPreview();
+    }
+
+    function adjustZoom(delta) {
+        const slider = document.getElementById('cropZoomSlider');
+        let val = parseFloat(slider.value) + delta;
+        val = Math.max(0.5, Math.min(3, val));
+        slider.value = val;
+        handleZoomChange(val);
+    }
+
+    function initCropTouchEvents() {
+        const canvas = document.getElementById('cropCanvas');
+
+        function startDrag(x, y) {
+            isDraggingCrop = true;
+            dragStartX = x - cropOffsetX;
+            dragStartY = y - cropOffsetY;
+        }
+
+        function moveDrag(x, y) {
+            if (!isDraggingCrop) return;
+            cropOffsetX = x - dragStartX;
+            cropOffsetY = y - dragStartY;
+            drawCropPreview();
+        }
+
+        function stopDrag() {
+            isDraggingCrop = false;
+        }
+
+        // Mouse Events
+        canvas.onmousedown = (e) => startDrag(e.clientX, e.clientY);
+        window.onmousemove = (e) => moveDrag(e.clientX, e.clientY);
+        window.onmouseup = () => stopDrag();
+
+        // Touch Events
+        canvas.ontouchstart = (e) => {
+            if (e.touches.length === 1) {
+                startDrag(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        };
+        canvas.ontouchmove = (e) => {
+            if (e.touches.length === 1) {
+                moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        };
+        canvas.ontouchend = () => stopDrag();
+    }
+
+    function saveCroppedPhoto() {
+        const canvas = document.getElementById('cropCanvas');
+        const cw = canvas.width;
+        const ch = canvas.height;
+        const boxX = (cw - CROP_BOX_SIZE) / 2;
+        const boxY = (ch - CROP_BOX_SIZE) / 2;
+
+        const currentScale = cropBaseScale * cropScale;
+
+        // Calculate source rectangle coordinates corresponding to the crop box
+        const srcX = (boxX - cropOffsetX) / currentScale + sourceImageObj.width / 2;
+        const srcY = (boxY - cropOffsetY) / currentScale + sourceImageObj.height / 2;
+        const srcDim = CROP_BOX_SIZE / currentScale;
+
+        // Standard output canvas for optimized storage
+        const outCanvas = document.createElement('canvas');
+        const TARGET_SIZE = 150; // Optimized dimension in px
+        outCanvas.width = TARGET_SIZE;
+        outCanvas.height = TARGET_SIZE;
+        const outCtx = outCanvas.getContext('2d');
+
+        outCtx.drawImage(
+            sourceImageObj,
+            srcX, srcY, srcDim, srcDim,
+            0, 0, TARGET_SIZE, TARGET_SIZE
+        );
+
+        const croppedDataUrl = outCanvas.toDataURL('image/jpeg', 0.7);
+
+        if (activeVoterForPhoto) {
+            activeVoterForPhoto[activePhotoType] = croppedDataUrl;
+            renderAll();
+            if (typeof window.syncDatabase === 'function') window.syncDatabase();
+        }
+
+        closeCropModal();
     }
 
     function viewPhotoWithDetails(photoDataUrl, name, slNo, typeLabel) {
@@ -1081,7 +1532,6 @@
 
             const status = voter.status || 'active';
             
-            // Buttons directly mapped to individual cells underneath content
             const houseBtn = `<button class="action-btn btn-house" onclick="updateHouseNoOnly('${voter.slNo}')">🏠 House</button>`;
             const epicBtn = `<button class="action-btn btn-epic" onclick="updateEpicNoOnly('${voter.slNo}')">🆔 EPIC</button>`;
             const dobBtn = `<button class="action-btn btn-dob" onclick="updateDobOnly('${voter.slNo}')">📅 DOB</button>`;
@@ -1125,7 +1575,6 @@
                 <tr id="voter-${voter.slNo}" class="${rowClass}" data-status="${status}">
                     <td><strong>${voter.slNo}</strong></td>
                     
-                    <!-- Old Photo cell with button directly underneath -->
                     <td>
                         <div class="cell-content-box">
                             ${oldPhotoImg}
@@ -1136,7 +1585,6 @@
                         </div>
                     </td>
 
-                    <!-- New Photo cell with button directly underneath -->
                     <td>
                         <div class="cell-content-box">
                             ${newPhotoImg}
@@ -1147,7 +1595,6 @@
                         </div>
                     </td>
 
-                    <!-- House No cell with button directly underneath -->
                     <td>
                         <div class="cell-content-box">
                             <span>${voter.houseNo || '—'}</span>
@@ -1155,7 +1602,6 @@
                         </div>
                     </td>
 
-                    <!-- EPIC No cell with button directly underneath -->
                     <td>
                         <div class="cell-content-box">
                             <strong>${voter.epicNo || '—'}</strong>
@@ -1163,7 +1609,6 @@
                         </div>
                     </td>
 
-                    <!-- DOB cell with button directly underneath -->
                     <td>
                         <div class="cell-content-box">
                             <span>${voter.dob || '—'}</span>
@@ -1174,7 +1619,6 @@
                     <td>${voter.name}</td>
                     <td>${voter.parent}</td>
 
-                    <!-- Mobile cell with button directly underneath -->
                     <td>
                         <div class="cell-content-box">
                             <span class="${voter.mobile && voter.mobile !== '—' ? 'clickable-mobile' : ''}" ondblclick="callMobile('${voter.mobile}')" title="Double tap to call">
@@ -1184,7 +1628,6 @@
                         </div>
                     </td>
 
-                    <!-- Aadhaar cell with button directly underneath -->
                     <td>
                         <div class="cell-content-box">
                             <span>${voter.aadhaar || '—'}</span>
@@ -1194,7 +1637,6 @@
 
                     <td>${voter.gender || 'Male'}</td>
 
-                    <!-- Status Decision Actions Column -->
                     <td>${statusActionHtml}</td>
                 </tr>`;
 
