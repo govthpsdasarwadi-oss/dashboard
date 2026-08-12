@@ -38,7 +38,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: 6px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -116,10 +116,10 @@
             font-weight: 600;
         }
 
-        /* --- Dashboard Container --- */
+        /* --- Main Dashboard Container --- */
         .container {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1100px;
             margin: 0 auto;
             display: none;
         }
@@ -127,7 +127,7 @@
         header {
             background: var(--primary);
             color: white;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 10px;
             text-align: center;
@@ -135,12 +135,12 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        header h1 { font-size: 18px; font-weight: 700; }
-        header p { font-size: 11px; opacity: 0.9; margin-top: 2px; }
+        header h1 { font-size: 19px; font-weight: 700; }
+        header p { font-size: 12px; opacity: 0.9; margin-top: 2px; }
 
         .header-actions {
             position: absolute;
-            right: 10px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
         }
@@ -149,10 +149,11 @@
             background: rgba(255,255,255,0.2);
             color: white;
             border: 1px solid rgba(255,255,255,0.4);
-            padding: 4px 8px;
+            padding: 5px 10px;
             border-radius: 4px;
             font-size: 11px;
             cursor: pointer;
+            font-weight: 600;
         }
 
         .btn-logout:hover { background: var(--danger); border-color: var(--danger); }
@@ -193,14 +194,14 @@
             gap: 10px;
             margin-bottom: 12px;
             background: #e2e8f0;
-            padding: 10px;
+            padding: 12px;
             border-radius: 8px;
         }
 
         .summary-grid, .summary-sub-grid, .gender-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            gap: 8px;
         }
 
         .summary-sub-grid {
@@ -209,7 +210,7 @@
 
         .summary-card {
             background: var(--card-bg);
-            padding: 8px 4px;
+            padding: 10px 6px;
             border-radius: 6px;
             text-align: center;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -225,15 +226,14 @@
         .summary-card.nolink { border-bottom-color: var(--nolink); }
 
         .summary-label {
-            font-size: 9px;
+            font-size: 10px;
             color: var(--text-muted);
             text-transform: uppercase;
             font-weight: bold;
             margin-bottom: 2px;
-            letter-spacing: 0.2px;
         }
 
-        .summary-value { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .summary-value { font-size: 17px; font-weight: 700; color: var(--text-main); }
 
         .entry-container {
             display: grid;
@@ -241,13 +241,8 @@
             gap: 10px;
         }
 
-        @media (min-width: 900px) {
-            body { padding: 12px; }
-            header h1 { font-size: 22px; }
-            header p { font-size: 13px; }
+        @media (min-width: 800px) {
             .entry-container { grid-template-columns: 1fr 1fr; }
-            .summary-label { font-size: 11px; }
-            .summary-value { font-size: 22px; }
         }
 
         .panel {
@@ -263,7 +258,6 @@
             margin-bottom: 8px;
             color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 0.3px;
         }
 
         .input-group {
@@ -287,7 +281,7 @@
 
         .file-upload-box {
             border: 2px dashed var(--primary);
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             text-align: center;
             background: #f7fafc;
@@ -420,11 +414,12 @@
             font-weight: 700;
         }
 
+        /* --- Clean Table Structure --- */
         .table-panel {
             background: var(--card-bg);
             border-radius: 0 0 8px 8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            padding: 8px;
+            padding: 6px;
             margin-bottom: 16px;
         }
 
@@ -437,115 +432,57 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px;
         }
 
         th {
-            font-size: 10px;
+            font-size: 11px;
             text-transform: uppercase;
             color: var(--text-muted);
-            padding: 8px 6px;
+            padding: 10px 8px;
             text-align: left;
             border-bottom: 2px solid var(--border);
             background: #f7fafc;
         }
 
         td {
-            padding: 8px 6px;
+            padding: 10px 8px;
             border-bottom: 1px solid var(--border);
-            font-size: 12px;
+            font-size: 13px;
             vertical-align: middle;
-            word-wrap: break-word;
         }
 
-        .cell-content-box {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            align-items: flex-start;
-        }
-
-        .clickable-mobile {
-            color: var(--primary);
-            font-weight: 600;
+        .voter-row {
             cursor: pointer;
-            user-select: none;
+            transition: background 0.15s;
         }
-        .clickable-mobile:hover {
-            text-decoration: underline;
+        .voter-row:hover {
+            background-color: #f7fafc;
         }
 
-        .voter-thumb {
+        .voter-name-link {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: underline;
+            display: inline-block;
+        }
+
+        .voter-name-link:hover {
+            color: var(--primary-hover);
+        }
+
+        .voter-thumb-list {
             width: 36px;
             height: 36px;
-            border-radius: 4px;
+            border-radius: 50%;
             object-fit: cover;
             border: 1px solid var(--border);
-            cursor: pointer;
-            transition: transform 0.1s ease;
+            background-color: #edf2f7;
         }
-        .voter-thumb:hover { transform: scale(1.1); }
-
-        .action-group { 
-            display: flex;
-            flex-wrap: wrap; 
-            gap: 4px; 
-            align-items: center;
-        }
-
-        .action-btn {
-            padding: 3px 6px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 9px;
-            font-weight: 600;
-            cursor: pointer;
-            background: #fff;
-            text-align: center;
-            min-height: 24px;
-            white-space: nowrap;
-        }
-
-        .row-death { background-color: #edf2f7; color: #4a5568; }
-        .row-shifted { background-color: #fffaf0; }
-        .row-double { background-color: #fff5f5; color: #9b2c2c; }
-        .row-nolink { background-color: #fefcbf; color: #744210; }
-        .row-enrolled { background-color: #faf5ff; }
-
-        .action-btn.btn-dead:hover { background-color: #718096; color: white; }
-        .action-btn.btn-shift:hover { background-color: var(--warning); color: white; }
-        .action-btn.btn-double:hover { background-color: var(--double); color: white; }
-        .action-btn.btn-nolink { background-color: #fefcbf; color: #744210; border-color: #fbd38d; }
-        .action-btn.btn-nolink:hover { background-color: var(--nolink); color: white; }
-        .action-btn.btn-reset:hover { background-color: var(--primary); color: white; }
-        
-        .action-btn.btn-house { background-color: #e6fffa; color: #234e52; border-color: #b2f5ea; }
-        .action-btn.btn-house:hover { background-color: #319795; color: white; }
-
-        .action-btn.btn-epic { background-color: #feebc8; color: #7b341e; border-color: #fbd38d; }
-        .action-btn.btn-epic:hover { background-color: #dd6b20; color: white; }
-
-        .action-btn.btn-dob { background-color: #ebf8ff; color: #2c5282; border-color: #bee3f8; }
-        .action-btn.btn-dob:hover { background-color: #2b6cb0; color: white; }
-
-        .action-btn.btn-mobile { background-color: #ebf8ff; color: #2b6cb0; border-color: #bee3f8; }
-        .action-btn.btn-mobile:hover { background-color: #3182ce; color: white; }
-        
-        .action-btn.btn-aadhaar { background-color: #faf5ff; color: #6b46c1; border-color: #e9d8fd; }
-        .action-btn.btn-aadhaar:hover { background-color: #805ad5; color: white; }
-
-        .action-btn.btn-old-photo { background-color: #fffaf0; color: #dd6b20; border-color: #fbd38d; }
-        .action-btn.btn-old-photo:hover { background-color: #dd6b20; color: white; }
-
-        .action-btn.btn-new-photo { background-color: #f0fff4; color: #276749; border-color: #9ae6b4; }
-        .action-btn.btn-new-photo:hover { background-color: #276749; color: white; }
-
-        .action-btn.btn-del-photo { background-color: #fff5f5; color: #e53e3e; border-color: #fed7d7; }
-        .action-btn.btn-del-photo:hover { background-color: #e53e3e; color: white; }
 
         .status-badge {
             display: inline-block;
-            padding: 4px 6px;
+            padding: 3px 6px;
             border-radius: 4px;
             font-weight: bold;
             font-size: 10px;
@@ -553,6 +490,7 @@
             color: white;
             text-align: center;
         }
+        .badge-active { background-color: var(--success); }
         .badge-death { background-color: #718096; }
         .badge-shifted { background-color: var(--warning); }
         .badge-double { background-color: var(--double); }
@@ -562,7 +500,7 @@
         .tab-content { display: none; }
         .tab-content.active { display: table-row-group; }
 
-        /* Modal Styles */
+        /* --- Individual Voter Full Profile Modal --- */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -571,28 +509,205 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
-            padding: 12px;
+            padding: 10px;
+            overflow-y: auto;
         }
+
         .modal-card {
             background: white;
-            border-radius: 8px;
-            padding: 16px;
+            border-radius: 12px;
+            padding: 18px;
             width: 100%;
-            max-width: 440px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            max-width: 520px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            max-height: 94vh;
+            overflow-y: auto;
         }
-        .modal-title { font-size: 14px; font-weight: bold; color: var(--primary); text-align: center; }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .btn-close-modal {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        /* Photos Section in Profile */
+        .profile-photos-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .photo-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .photo-slot span {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .profile-img-preview {
+            width: 85px;
+            height: 85px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            object-fit: cover;
+            cursor: pointer;
+            background-color: #edf2f7;
+        }
+
+        .profile-photo-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .mini-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+        }
+        .mini-btn.primary { background: var(--primary); color: white; border: none; }
+        .mini-btn.danger { background: var(--danger); color: white; border: none; }
+
+        /* Form Details in Profile */
+        .profile-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .detail-item.full-width {
+            grid-column: span 2;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+        .detail-input {
+            padding: 8px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .detail-input:focus {
+            border-color: var(--primary);
+        }
+
+        .phone-action-row {
+            display: flex;
+            gap: 4px;
+        }
+        .phone-action-row input { flex: 1; }
+        .btn-call {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0 12px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Status Selection Grid */
+        .status-selection-box {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: #edf2f7;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .status-selection-label {
+            font-size: 11px;
+            font-weight: bold;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .status-btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .status-btn-choice {
+            flex: 1;
+            min-width: 70px;
+            padding: 6px 4px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+            text-align: center;
+        }
+
+        .status-btn-choice.active-status {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
         .video-preview { width: 100%; height: 240px; background: #000; border-radius: 6px; object-fit: cover; }
-        .modal-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .modal-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; text-align: center; }
+        .modal-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+        .modal-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; text-align: center; }
         .modal-btn.primary { background: var(--primary); color: white; }
         .modal-btn.success { background: var(--success); color: white; }
         .modal-btn.danger { background: var(--danger); color: white; }
 
-        /* Interactive Crop Modal Styles with 4-side / Corner Draggable Controls */
+        /* Interactive Crop Modal */
         .crop-container {
             position: relative;
             width: 100%;
@@ -616,15 +731,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            padding: 2px 0;
-        }
-        .crop-controls label {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--text-muted);
-        }
-        .crop-controls input[type="range"] {
-            flex: 1;
+            padding: 4px 0;
         }
         .zoom-btn {
             background: #e2e8f0;
@@ -638,11 +745,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-main);
-            transition: background 0.15s;
-        }
-        .zoom-btn:active {
-            background: #cbd5e0;
         }
 
         .photo-view-box {
@@ -671,7 +773,7 @@
 
         @media print {
             body { background: white; padding: 0; }
-            #authOverlay, .toggle-container, .collapsible-dashboard-panel, .tabs-container, .search-export-bar, th:last-child, td:last-child, .action-btn {
+            #authOverlay, .toggle-container, .collapsible-dashboard-panel, .tabs-container, .search-export-bar, .modal-overlay {
                 display: none !important;
             }
             .container { max-width: 100%; display: block !important; }
@@ -679,13 +781,12 @@
             .tab-content { display: table-row-group !important; }
             table { min-width: 100%; font-size: 10px; }
             th, td { border: 1px solid var(--border); padding: 4px; }
-            .voter-thumb { width: 28px; height: 28px; }
         }
     </style>
 </head>
 <body>
 
-<!-- OTP Authentication Lock Screen (Strictly for +917019400321) -->
+<!-- OTP Authentication Lock Screen -->
 <div id="authOverlay">
     <div class="auth-card">
         <h2>🔒 BLO Login</h2>
@@ -720,7 +821,7 @@
 
     <div class="toggle-container">
         <button class="btn-toggle-panel" onclick="toggleAddPanel()">
-            <span>➕ Voter Input & Metrics Dashboard</span>
+            <span>➕ Voter Input & Summary Overview</span>
             <span id="toggleArrow">▼</span>
         </button>
     </div>
@@ -826,23 +927,18 @@
         </div>
     </div>
 
+    <!-- Clean Table Overview: Clicking any row opens the voter's details card -->
     <div class="table-panel">
         <div class="table-responsive">
             <table id="mainVoterTable">
                 <thead>
                     <tr>
-                        <th style="width: 4%;">Sl.</th>
-                        <th style="width: 6%;">Old Photo</th>
-                        <th style="width: 6%;">New Photo</th>
-                        <th style="width: 8%;">House No</th>
-                        <th style="width: 9%;">EPIC No</th>
-                        <th style="width: 8%;">DOB</th>
-                        <th style="width: 13%;">Voter Name</th>
-                        <th style="width: 11%;">Parent Name</th>
-                        <th style="width: 11%;">Mobile (Double Tap)</th>
-                        <th style="width: 10%;">Aadhaar</th>
-                        <th style="width: 4%;">Gender</th>
-                        <th style="width: 10%;">Status / Action</th>
+                        <th style="width: 8%;">Sl.</th>
+                        <th style="width: 10%;">Photo</th>
+                        <th style="width: 32%;">Voter Name (Click to View)</th>
+                        <th style="width: 18%;">House / EPIC</th>
+                        <th style="width: 18%;">Mobile</th>
+                        <th style="width: 14%;">Status</th>
                     </tr>
                 </thead>
                 
@@ -857,10 +953,118 @@
     </div>
 </div>
 
-<!-- Upload / Camera Initial Selection Modal -->
-<div class="modal-overlay" id="photoModal">
+<!-- ============================================== -->
+<!-- INDIVIDUAL VOTER DETAIL CARD (MODAL)           -->
+<!-- ============================================== -->
+<div class="modal-overlay" id="voterProfileModal">
     <div class="modal-card">
-        <div class="modal-title" id="photoModalTitle">Manage Voter Photo</div>
+        <div class="modal-header">
+            <h3 id="profileModalHeader">Voter Profile</h3>
+            <button class="btn-close-modal" onclick="closeVoterProfileModal()">&times;</button>
+        </div>
+
+        <!-- Photos inside profile -->
+        <div class="profile-photos-row">
+            <div class="photo-slot">
+                <span>Old Photo</span>
+                <img id="profOldPhotoImg" class="profile-img-preview" src="" onclick="viewOldPhotoFull()" title="Click to view full image">
+                <div class="profile-photo-actions">
+                    <button class="mini-btn primary" onclick="openPhotoPickerForProfile('oldPhoto')">📷 Change</button>
+                    <button class="mini-btn danger" onclick="deleteProfilePhoto('oldPhoto')">🗑️</button>
+                </div>
+            </div>
+
+            <div class="photo-slot">
+                <span>New Photo</span>
+                <img id="profNewPhotoImg" class="profile-img-preview" src="" onclick="viewNewPhotoFull()" title="Click to view full image">
+                <div class="profile-photo-actions">
+                    <button class="mini-btn primary" onclick="openPhotoPickerForProfile('newPhoto')">📸 Change</button>
+                    <button class="mini-btn danger" onclick="deleteProfilePhoto('newPhoto')">🗑️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Form -->
+        <div class="profile-details-grid">
+            <div class="detail-item">
+                <label class="detail-label">Sl. No.</label>
+                <input type="text" id="profSlNo" class="detail-input" readonly style="background-color:#f7fafc; font-weight:bold;">
+            </div>
+
+            <div class="detail-item">
+                <label class="detail-label">House / Door No.</label>
+                <input type="text" id="profHouseNo" class="detail-input">
+            </div>
+
+            <div class="detail-item full-width">
+                <label class="detail-label">Voter Name</label>
+                <input type="text" id="profName" class="detail-input" style="font-weight:600;">
+            </div>
+
+            <div class="detail-item full-width">
+                <label class="detail-label">Parent / Husband Name</label>
+                <input type="text" id="profParent" class="detail-input">
+            </div>
+
+            <div class="detail-item">
+                <label class="detail-label">EPIC / Voter ID</label>
+                <input type="text" id="profEpic" class="detail-input" style="text-transform:uppercase;">
+            </div>
+
+            <div class="detail-item">
+                <label class="detail-label">Date of Birth (DOB)</label>
+                <input type="text" id="profDob" class="detail-input" placeholder="YYYY-MM-DD">
+            </div>
+
+            <div class="detail-item">
+                <label class="detail-label">Gender</label>
+                <select id="profGender" class="detail-input">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="detail-item">
+                <label class="detail-label">Aadhaar (12 Digits)</label>
+                <input type="text" id="profAadhaar" class="detail-input" maxlength="12" oninput="this.value=this.value.replace(/\D/g,'')">
+            </div>
+
+            <!-- Mobile & Direct Calling INSIDE modal -->
+            <div class="detail-item full-width">
+                <label class="detail-label">Mobile Number (10 Digits)</label>
+                <div class="phone-action-row">
+                    <input type="text" id="profMobile" class="detail-input" maxlength="10" oninput="this.value=this.value.replace(/\D/g,'')">
+                    <button class="btn-call" onclick="callProfileMobile()">📞 Call</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verification Status Selection INSIDE modal -->
+        <div class="status-selection-box">
+            <span class="status-selection-label">Verification Status</span>
+            <div class="status-btn-group">
+                <button class="status-btn-choice" id="statusBtn_active" onclick="setProfileStatus('active')">Active</button>
+                <button class="status-btn-choice" id="statusBtn_death" onclick="setProfileStatus('death')">Death</button>
+                <button class="status-btn-choice" id="statusBtn_shifted" onclick="setProfileStatus('shifted')">Shifted</button>
+                <button class="status-btn-choice" id="statusBtn_double" onclick="setProfileStatus('double')">Double</button>
+                <button class="status-btn-choice" id="statusBtn_nolink" onclick="setProfileStatus('nolink')">No Link</button>
+                <button class="status-btn-choice" id="statusBtn_enrolled" onclick="setProfileStatus('enrolled')">Enrolled</button>
+            </div>
+        </div>
+
+        <!-- Save Actions -->
+        <div class="modal-actions">
+            <button class="modal-btn success" onclick="saveVoterProfileChanges()">💾 Save Changes</button>
+            <button class="modal-btn danger" onclick="closeVoterProfileModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Photo Capture / File Selection Modal -->
+<div class="modal-overlay" id="photoModal">
+    <div class="modal-card" style="max-width: 420px;">
+        <div class="modal-title" id="photoModalTitle" style="font-size:14px; font-weight:bold; color:var(--primary); text-align:center;">Manage Voter Photo</div>
         
         <video id="cameraVideo" class="video-preview" style="display:none;" autoplay playsinline></video>
         <input type="file" id="voterPhotoFileInput" accept="image/*" style="display:none;" onchange="handlePhotoFileSelected(event)">
@@ -868,7 +1072,7 @@
         <div class="modal-actions" id="modalChoiceView">
             <button class="modal-btn primary" onclick="startCamera()">📷 Take Live Photo</button>
             <button class="modal-btn success" onclick="document.getElementById('voterPhotoFileInput').click()">📁 Choose Image File</button>
-            <button class="modal-btn danger" onclick="closePhotoModal()">Close</button>
+            <button class="modal-btn danger" onclick="closePhotoModal()">Cancel</button>
         </div>
 
         <div class="modal-actions" id="modalCameraView" style="display:none;">
@@ -878,25 +1082,22 @@
     </div>
 </div>
 
-<!-- Interactive Crop Modal with Up/Down/Side Adjustment -->
+<!-- Interactive Crop Modal with Up/Down/Side Adjustments -->
 <div class="modal-overlay" id="cropModal">
     <div class="modal-card" style="max-width: 420px;">
-        <div class="modal-title">Adjust Crop Area (Drag Sides, Corners & Center)</div>
+        <div class="modal-title" style="font-size:14px; font-weight:bold; color:var(--primary); text-align:center;">Adjust Crop Area</div>
         <p style="font-size: 11px; color: var(--text-muted); text-align: center;">
-            Drag edges/corners to resize up/down/sides. Drag center to move.
+            Drag edges/corners to resize. Drag center to move.
         </p>
         
         <div class="crop-container" id="cropBoxContainer">
             <canvas id="cropCanvas" width="360" height="320"></canvas>
         </div>
 
-        <!-- Zoom Controls with +/- on both sides -->
         <div class="crop-controls">
-            <button class="zoom-btn" onclick="adjustZoom(-0.1)" title="Zoom Out">−</button>
-            <button class="zoom-btn" onclick="adjustZoom(0.1)" title="Zoom In">+</button>
-            <input type="range" id="cropZoomSlider" min="0.5" max="3" step="0.05" value="1" oninput="handleZoomChange(this.value)">
-            <button class="zoom-btn" onclick="adjustZoom(-0.1)" title="Zoom Out">−</button>
-            <button class="zoom-btn" onclick="adjustZoom(0.1)" title="Zoom In">+</button>
+            <button class="zoom-btn" onclick="adjustZoom(-0.1)">−</button>
+            <input type="range" id="cropZoomSlider" min="0.5" max="3" step="0.05" value="1" oninput="handleZoomChange(this.value)" style="flex:1;">
+            <button class="zoom-btn" onclick="adjustZoom(0.1)">+</button>
         </div>
 
         <div class="modal-actions">
@@ -908,8 +1109,8 @@
 
 <!-- Full Photo Preview Modal -->
 <div class="modal-overlay" id="viewPhotoModal">
-    <div class="modal-card">
-        <div class="modal-title" id="viewPhotoTitle">Voter Photo Preview</div>
+    <div class="modal-card" style="max-width: 440px;">
+        <div class="modal-title" id="viewPhotoTitle" style="font-size:14px; font-weight:bold; color:var(--primary); text-align:center;">Voter Photo Preview</div>
         
         <div class="photo-view-box">
             <img id="viewPhotoImg" class="photo-view-img" src="" alt="Voter Photo">
@@ -1032,7 +1233,7 @@
 
         confirmationResult.confirm(otp)
             .then((result) => {
-                // Logged in successfully
+                // Verified
             })
             .catch((error) => {
                 err.innerText = 'Invalid OTP: ' + error.message;
@@ -1100,16 +1301,15 @@
 </script>
 
 <script>
-    let activeVoterForPhoto = null;
+    let activeVoter = null;
     let activePhotoType = 'newPhoto';
     let cameraStream = null;
 
-    // Advanced Drawable & Movable Crop Box State
+    // Advanced Drawable Crop Tool Variables
     let sourceImageObj = new Image();
     let cropZoom = 1;
     let imgDrawX = 0, imgDrawY = 0, imgDrawW = 0, imgDrawH = 0;
 
-    // Crop box rectangle coordinates (on canvas)
     let cropBox = { x: 50, y: 50, w: 180, h: 180 };
     let activeHandle = null;
     let dragStartPos = { x: 0, y: 0 };
@@ -1152,16 +1352,12 @@
         const rows = activeTabContent.querySelectorAll('tr');
         rows.forEach(row => {
             const slNo = row.cells[0] ? row.cells[0].innerText.toLowerCase() : '';
-            const houseNo = row.cells[3] ? row.cells[3].innerText.toLowerCase() : '';
-            const epicNo = row.cells[4] ? row.cells[4].innerText.toLowerCase() : '';
-            const dob = row.cells[5] ? row.cells[5].innerText.toLowerCase() : '';
-            const name = row.cells[6] ? row.cells[6].innerText.toLowerCase() : '';
-            const parent = row.cells[7] ? row.cells[7].innerText.toLowerCase() : '';
-            const mobile = row.cells[8] ? row.cells[8].innerText.toLowerCase() : '';
-            const aadhaar = row.cells[9] ? row.cells[9].innerText.toLowerCase() : '';
-            const gender = row.cells[10] ? row.cells[10].innerText.trim() : '';
+            const name = row.cells[2] ? row.cells[2].innerText.toLowerCase() : '';
+            const houseEpic = row.cells[3] ? row.cells[3].innerText.toLowerCase() : '';
+            const mobile = row.cells[4] ? row.cells[4].innerText.toLowerCase() : '';
+            const gender = row.getAttribute('data-gender') || '';
 
-            const matchesText = slNo.includes(query) || houseNo.includes(query) || epicNo.includes(query) || dob.includes(query) || name.includes(query) || parent.includes(query) || mobile.includes(query) || aadhaar.includes(query);
+            const matchesText = slNo.includes(query) || name.includes(query) || houseEpic.includes(query) || mobile.includes(query);
             const matchesGender = (genderFilter === 'All') || (gender.toLowerCase() === genderFilter.toLowerCase());
 
             if (matchesText && matchesGender) {
@@ -1172,84 +1368,146 @@
         });
     }
 
-    function callMobile(mobileNum) {
-        if (mobileNum && mobileNum !== '—') {
-            window.location.href = `tel:${mobileNum}`;
-        }
-    }
+    /* --- Individual Voter Profile Modal Handlers --- */
+    function openVoterProfile(slNo) {
+        activeVoter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
+        if (!activeVoter) return;
 
-    function updateHouseNoOnly(slNo) {
-        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
-        if (!voter) return;
-
-        const currentVal = voter.houseNo && voter.houseNo !== '—' ? voter.houseNo : '';
-        const newHouseNo = prompt(`Enter House / Door No. for Sl. ${voter.slNo} (${voter.name}):`, currentVal);
+        document.getElementById('profileModalHeader').innerText = `Voter Profile: Sl. ${activeVoter.slNo} - ${activeVoter.name}`;
         
-        if (newHouseNo !== null) {
-            voter.houseNo = newHouseNo.trim() || '—';
-            renderAll();
-            if (typeof window.syncDatabase === 'function') window.syncDatabase();
+        document.getElementById('profSlNo').value = activeVoter.slNo || '';
+        document.getElementById('profHouseNo').value = activeVoter.houseNo !== '—' ? activeVoter.houseNo : '';
+        document.getElementById('profName').value = activeVoter.name || '';
+        document.getElementById('profParent').value = activeVoter.parent !== '—' ? activeVoter.parent : '';
+        document.getElementById('profEpic').value = activeVoter.epicNo !== '—' ? activeVoter.epicNo : '';
+        document.getElementById('profDob').value = activeVoter.dob !== '—' ? activeVoter.dob : '';
+        document.getElementById('profGender').value = activeVoter.gender || 'Male';
+        document.getElementById('profAadhaar').value = activeVoter.aadhaar !== '—' ? activeVoter.aadhaar : '';
+        document.getElementById('profMobile').value = activeVoter.mobile !== '—' ? activeVoter.mobile : '';
+
+        // Photos
+        const placeholderImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23cbd5e0'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
+        document.getElementById('profOldPhotoImg').src = activeVoter.oldPhoto || placeholderImg;
+        document.getElementById('profNewPhotoImg').src = activeVoter.newPhoto || placeholderImg;
+
+        // Set status button style
+        updateStatusButtonsUI(activeVoter.status || 'active');
+
+        document.getElementById('voterProfileModal').style.display = 'flex';
+    }
+
+    function closeVoterProfileModal() {
+        document.getElementById('voterProfileModal').style.display = 'none';
+        activeVoter = null;
+    }
+
+    function setProfileStatus(newStatus) {
+        if (!activeVoter) return;
+        activeVoter.status = newStatus;
+        updateStatusButtonsUI(newStatus);
+    }
+
+    function updateStatusButtonsUI(currStatus) {
+        const statuses = ['active', 'death', 'shifted', 'double', 'nolink', 'enrolled'];
+        statuses.forEach(st => {
+            const btn = document.getElementById(`statusBtn_${st}`);
+            if (btn) {
+                if (st === currStatus) {
+                    btn.classList.add('active-status');
+                } else {
+                    btn.classList.remove('active-status');
+                }
+            }
+        });
+    }
+
+    function saveVoterProfileChanges() {
+        if (!activeVoter) return;
+
+        const houseNo = document.getElementById('profHouseNo').value.trim() || '—';
+        const name = document.getElementById('profName').value.trim() || '—';
+        const parent = document.getElementById('profParent').value.trim() || '—';
+        const epicNo = document.getElementById('profEpic').value.trim().toUpperCase() || '—';
+        const dob = document.getElementById('profDob').value.trim() || '—';
+        const gender = document.getElementById('profGender').value;
+        const mobile = document.getElementById('profMobile').value.trim();
+        const aadhaar = document.getElementById('profAadhaar').value.trim();
+
+        if (mobile && mobile.length !== 10) {
+            alert("Mobile number must be exactly 10 digits.");
+            return;
+        }
+
+        if (aadhaar && aadhaar.length !== 12) {
+            alert("Aadhaar number must be exactly 12 digits.");
+            return;
+        }
+
+        activeVoter.houseNo = houseNo;
+        activeVoter.name = name;
+        activeVoter.parent = parent;
+        activeVoter.epicNo = epicNo;
+        activeVoter.dob = dob;
+        activeVoter.gender = gender;
+        activeVoter.mobile = mobile || '—';
+        activeVoter.aadhaar = aadhaar || '—';
+
+        renderAll();
+        if (typeof window.syncDatabase === 'function') window.syncDatabase();
+
+        alert(`Voter details for ${activeVoter.name} saved successfully!`);
+        closeVoterProfileModal();
+    }
+
+    function callProfileMobile() {
+        const mob = document.getElementById('profMobile').value.trim();
+        if (mob) {
+            window.location.href = `tel:${mob}`;
+        } else {
+            alert("No mobile number entered.");
         }
     }
 
-    function updateEpicNoOnly(slNo) {
-        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
-        if (!voter) return;
-
-        const currentVal = voter.epicNo && voter.epicNo !== '—' ? voter.epicNo : '';
-        const newEpicNo = prompt(`Enter EPIC / Voter ID No. for Sl. ${voter.slNo} (${voter.name}):`, currentVal);
-        
-        if (newEpicNo !== null) {
-            voter.epicNo = newEpicNo.trim().toUpperCase() || '—';
-            renderAll();
-            if (typeof window.syncDatabase === 'function') window.syncDatabase();
+    function viewOldPhotoFull() {
+        if (activeVoter && activeVoter.oldPhoto) {
+            viewPhotoWithDetails(activeVoter.oldPhoto, activeVoter.name, activeVoter.slNo, 'Old Photo');
         }
     }
 
-    function updateDobOnly(slNo) {
-        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
-        if (!voter) return;
-
-        const currentVal = voter.dob && voter.dob !== '—' ? voter.dob : '';
-        const newDob = prompt(`Enter Date of Birth (YYYY-MM-DD or DD/MM/YYYY) for Sl. ${voter.slNo} (${voter.name}):`, currentVal);
-        
-        if (newDob !== null) {
-            voter.dob = newDob.trim() || '—';
-            renderAll();
-            if (typeof window.syncDatabase === 'function') window.syncDatabase();
+    function viewNewPhotoFull() {
+        if (activeVoter && activeVoter.newPhoto) {
+            viewPhotoWithDetails(activeVoter.newPhoto, activeVoter.name, activeVoter.slNo, 'New Photo');
         }
     }
 
-    function openPhotoModal(slNo, photoType) {
-        activeVoterForPhoto = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
-        if (!activeVoterForPhoto) return;
-
+    function openPhotoPickerForProfile(photoType) {
+        if (!activeVoter) return;
         activePhotoType = photoType;
         const typeLabel = photoType === 'oldPhoto' ? 'Old Photo' : 'New Photo';
-
-        document.getElementById('photoModalTitle').innerText = `Upload ${typeLabel} for Sl. ${activeVoterForPhoto.slNo} (${activeVoterForPhoto.name})`;
+        document.getElementById('photoModalTitle').innerText = `Upload ${typeLabel} for ${activeVoter.name}`;
         document.getElementById('modalChoiceView').style.display = 'flex';
         document.getElementById('modalCameraView').style.display = 'none';
         document.getElementById('cameraVideo').style.display = 'none';
         document.getElementById('photoModal').style.display = 'flex';
     }
 
-    function closePhotoModal() {
-        stopCamera();
-        document.getElementById('photoModal').style.display = 'none';
-    }
-
-    function deleteVoterPhoto(slNo, photoType) {
-        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
-        if (!voter) return;
-
+    function deleteProfilePhoto(photoType) {
+        if (!activeVoter) return;
         const typeLabel = photoType === 'oldPhoto' ? 'Old Photo' : 'New Photo';
-
-        if (confirm(`Are you sure you want to delete the ${typeLabel} for ${voter.name} (Sl. ${voter.slNo})?`)) {
-            voter[photoType] = '';
+        if (confirm(`Delete ${typeLabel} for ${activeVoter.name}?`)) {
+            activeVoter[photoType] = '';
+            const placeholderImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 24 24' fill='%23cbd5e0'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
+            if (photoType === 'oldPhoto') document.getElementById('profOldPhotoImg').src = placeholderImg;
+            if (photoType === 'newPhoto') document.getElementById('profNewPhotoImg').src = placeholderImg;
             renderAll();
             if (typeof window.syncDatabase === 'function') window.syncDatabase();
         }
+    }
+
+    /* --- Camera & Crop Controls --- */
+    function closePhotoModal() {
+        stopCamera();
+        document.getElementById('photoModal').style.display = 'none';
     }
 
     async function startCamera() {
@@ -1302,7 +1560,6 @@
         e.target.value = '';
     }
 
-    /* --- Advanced Drawable Crop Tool Implementation --- */
     function openCropModal(imgSrc) {
         const canvas = document.getElementById('cropCanvas');
         const container = document.getElementById('cropBoxContainer');
@@ -1316,7 +1573,6 @@
             cropZoom = 1;
             document.getElementById('cropZoomSlider').value = 1;
 
-            // Initial center square crop box
             const boxDim = Math.min(cw, ch) * 0.65;
             cropBox = {
                 x: (cw - boxDim) / 2,
@@ -1368,39 +1624,31 @@
         updateImageBounds();
         ctx.clearRect(0, 0, cw, ch);
 
-        // 1. Draw scaled background image
         ctx.drawImage(sourceImageObj, imgDrawX, imgDrawY, imgDrawW, imgDrawH);
 
-        // 2. Draw Semi-Transparent Dark Mask
         ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         ctx.beginPath();
         ctx.rect(0, 0, cw, ch);
-        // Cut out the movable/resizable crop box
         ctx.rect(cropBox.x + cropBox.w, cropBox.y, -cropBox.w, cropBox.h);
         ctx.fill();
 
-        // 3. Draw Crop Box Border
         ctx.strokeStyle = '#3182ce';
         ctx.lineWidth = 2;
         ctx.strokeRect(cropBox.x, cropBox.y, cropBox.w, cropBox.h);
 
-        // 4. Draw 3x3 Rule-of-Thirds Grid
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
         ctx.lineWidth = 1;
         ctx.beginPath();
-        // Vertical lines
         ctx.moveTo(cropBox.x + cropBox.w / 3, cropBox.y);
         ctx.lineTo(cropBox.x + cropBox.w / 3, cropBox.y + cropBox.h);
         ctx.moveTo(cropBox.x + (2 * cropBox.w) / 3, cropBox.y);
         ctx.lineTo(cropBox.x + (2 * cropBox.w) / 3, cropBox.y + cropBox.h);
-        // Horizontal lines
         ctx.moveTo(cropBox.x, cropBox.y + cropBox.h / 3);
         ctx.lineTo(cropBox.x + cropBox.w, cropBox.y + cropBox.h / 3);
         ctx.moveTo(cropBox.x, cropBox.y + (2 * cropBox.h) / 3);
         ctx.lineTo(cropBox.x + cropBox.w, cropBox.y + (2 * cropBox.h) / 3);
         ctx.stroke();
 
-        // 5. Draw 8 Movable Handles (4 Corners + 4 Side Bars)
         drawHandles(ctx);
     }
 
@@ -1428,13 +1676,10 @@
             const h = handles[key];
             ctx.beginPath();
             if (key.length === 2) {
-                // Corner handles (Square)
                 ctx.rect(h.x - HANDLE_SIZE / 2, h.y - HANDLE_SIZE / 2, HANDLE_SIZE, HANDLE_SIZE);
             } else if (key === 't' || key === 'b') {
-                // Top/Bottom handles (Horizontal Pill)
                 ctx.rect(h.x - 12, h.y - 4, 24, 8);
             } else {
-                // Left/Right handles (Vertical Pill)
                 ctx.rect(h.x - 4, h.y - 12, 8, 24);
             }
             ctx.fill();
@@ -1453,7 +1698,6 @@
             }
         }
 
-        // Check inside crop box for dragging/moving
         if (px >= cropBox.x && px <= cropBox.x + cropBox.w && py >= cropBox.y && py <= cropBox.y + cropBox.h) {
             return 'move';
         }
@@ -1488,7 +1732,6 @@
             const pos = getPointerPos(e);
 
             if (!activeHandle) {
-                // Update cursor
                 const hit = getHitArea(pos.x, pos.y);
                 if (hit === 'move') {
                     canvas.style.cursor = 'move';
@@ -1511,7 +1754,6 @@
                 newBox.x = Math.max(0, Math.min(cw - newBox.w, initialCropBox.x + dx));
                 newBox.y = Math.max(0, Math.min(ch - newBox.h, initialCropBox.y + dy));
             } else {
-                // 4-side and corner adjustment
                 if (activeHandle.includes('l')) {
                     const proposedW = initialCropBox.w - dx;
                     if (proposedW >= MIN_BOX_SIZE && initialCropBox.x + dx >= 0) {
@@ -1572,7 +1814,6 @@
     }
 
     function saveCroppedPhoto() {
-        // Calculate the exact source rectangle corresponding to the crop box
         const scaleX = sourceImageObj.width / imgDrawW;
         const scaleY = sourceImageObj.height / imgDrawH;
 
@@ -1581,7 +1822,6 @@
         const srcW = cropBox.w * scaleX;
         const srcH = cropBox.h * scaleY;
 
-        // Create standard square avatar output
         const outCanvas = document.createElement('canvas');
         const TARGET_SIZE = 160;
         outCanvas.width = TARGET_SIZE;
@@ -1596,8 +1836,10 @@
 
         const croppedDataUrl = outCanvas.toDataURL('image/jpeg', 0.72);
 
-        if (activeVoterForPhoto) {
-            activeVoterForPhoto[activePhotoType] = croppedDataUrl;
+        if (activeVoter) {
+            activeVoter[activePhotoType] = croppedDataUrl;
+            if (activePhotoType === 'oldPhoto') document.getElementById('profOldPhotoImg').src = croppedDataUrl;
+            if (activePhotoType === 'newPhoto') document.getElementById('profNewPhotoImg').src = croppedDataUrl;
             renderAll();
             if (typeof window.syncDatabase === 'function') window.syncDatabase();
         }
@@ -1631,44 +1873,7 @@
         document.getElementById('viewPhotoModal').style.display = 'none';
     }
 
-    function updateMobileOnly(slNo) {
-        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
-        if (!voter) return;
-
-        const currentVal = voter.mobile !== '—' ? voter.mobile : '';
-        const newMobile = prompt(`Enter 10-digit Mobile Number for Sl. ${voter.slNo} (${voter.name}):`, currentVal);
-        
-        if (newMobile !== null) {
-            const cleanMobile = newMobile.trim().replace(/\D/g, '');
-            if (cleanMobile.length > 0 && cleanMobile.length !== 10) {
-                alert("Mobile number must be exactly 10 digits.");
-                return;
-            }
-            voter.mobile = cleanMobile || '—';
-            renderAll();
-            if (typeof window.syncDatabase === 'function') window.syncDatabase();
-        }
-    }
-
-    function updateAadhaarOnly(slNo) {
-        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
-        if (!voter) return;
-
-        const currentVal = voter.aadhaar !== '—' ? voter.aadhaar : '';
-        const newAadhaar = prompt(`Enter 12-digit Aadhaar Number for Sl. ${voter.slNo} (${voter.name}):`, currentVal);
-        
-        if (newAadhaar !== null) {
-            const cleanAadhaar = newAadhaar.trim().replace(/\D/g, '');
-            if (cleanAadhaar.length > 0 && cleanAadhaar.length !== 12) {
-                alert("Aadhaar number must be exactly 12 digits.");
-                return;
-            }
-            voter.aadhaar = cleanAadhaar || '—';
-            renderAll();
-            if (typeof window.syncDatabase === 'function') window.syncDatabase();
-        }
-    }
-
+    /* --- Rendering Table with Voter Separation --- */
     function renderAll() {
         const tabs = ['active', 'death', 'shifted', 'double', 'nolink', 'enrolled'];
         tabs.forEach(tab => {
@@ -1676,118 +1881,40 @@
             if (body) body.innerHTML = '';
         });
 
+        const placeholderImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 24 24' fill='%23cbd5e0'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
+
         (window.voterStore || []).forEach(voter => {
-            let statusActionHtml = '';
-            let rowClass = '';
-
             const status = voter.status || 'active';
+            const displayPhoto = voter.newPhoto || voter.oldPhoto || placeholderImg;
             
-            const houseBtn = `<button class="action-btn btn-house" onclick="updateHouseNoOnly('${voter.slNo}')">🏠 House</button>`;
-            const epicBtn = `<button class="action-btn btn-epic" onclick="updateEpicNoOnly('${voter.slNo}')">🆔 EPIC</button>`;
-            const dobBtn = `<button class="action-btn btn-dob" onclick="updateDobOnly('${voter.slNo}')">📅 DOB</button>`;
-            const mobileBtn = `<button class="action-btn btn-mobile" onclick="updateMobileOnly('${voter.slNo}')">📱 Mobile</button>`;
-            const aadhaarBtn = `<button class="action-btn btn-aadhaar" onclick="updateAadhaarOnly('${voter.slNo}')">🆔 Aadhaar</button>`;
-            
-            const oldPhotoBtn = `<button class="action-btn btn-old-photo" onclick="openPhotoModal('${voter.slNo}', 'oldPhoto')">📷 Photo</button>`;
-            const newPhotoBtn = `<button class="action-btn btn-new-photo" onclick="openPhotoModal('${voter.slNo}', 'newPhoto')">📸 Photo</button>`;
-            
-            const delOldPhotoBtn = voter.oldPhoto ? `<button class="action-btn btn-del-photo" onclick="deleteVoterPhoto('${voter.slNo}', 'oldPhoto')">🗑️</button>` : '';
-            const delNewPhotoBtn = voter.newPhoto ? `<button class="action-btn btn-del-photo" onclick="deleteVoterPhoto('${voter.slNo}', 'newPhoto')">🗑️</button>` : '';
-
-            if (status === 'active') {
-                statusActionHtml = `
-                    <div class="action-group">
-                        <button class="action-btn btn-dead" onclick="updateStatus('${voter.slNo}', 'death')">Death</button>
-                        <button class="action-btn btn-shift" onclick="updateStatus('${voter.slNo}', 'shifted')">Shifted</button>
-                        <button class="action-btn btn-double" onclick="updateStatus('${voter.slNo}', 'double')">Double</button>
-                        <button class="action-btn btn-nolink" onclick="updateStatus('${voter.slNo}', 'nolink')">🔗 No Link</button>
-                    </div>`;
-            } else {
-                let badgeClass = "badge-death";
-                let badgeText = status.toUpperCase();
-                if (status === 'death') { badgeClass = "badge-death"; rowClass = "row-death"; badgeText = "DECEASED"; }
-                else if (status === 'shifted') { badgeClass = "badge-shifted"; rowClass = "row-shifted"; badgeText = "PERM SHIFTED"; }
-                else if (status === 'double') { badgeClass = "badge-double"; rowClass = "row-double"; badgeText = "DOUBLE VOTER"; }
-                else if (status === 'nolink') { badgeClass = "badge-nolink"; rowClass = "row-nolink"; badgeText = "NO LINK"; }
-                else if (status === 'enrolled') { badgeClass = "badge-enrolled"; rowClass = "row-enrolled"; }
-
-                statusActionHtml = `
-                    <div class="action-group">
-                        <span class="status-badge ${badgeClass}">${badgeText}</span>
-                        <button class="action-btn btn-reset" onclick="updateStatus('${voter.slNo}', 'active')">Undo</button>
-                    </div>`;
-            }
-
-            const oldPhotoImg = voter.oldPhoto ? `<img src="${voter.oldPhoto}" class="voter-thumb" onclick="viewPhotoWithDetails('${voter.oldPhoto}', '${voter.name}', '${voter.slNo}', 'Old Photo')" title="Click to view full Old Photo">` : '—';
-            const newPhotoImg = voter.newPhoto ? `<img src="${voter.newPhoto}" class="voter-thumb" onclick="viewPhotoWithDetails('${voter.newPhoto}', '${voter.name}', '${voter.slNo}', 'New Photo')" title="Click to view full New Photo">` : '—';
+            let badgeClass = "badge-active";
+            let badgeText = "ACTIVE";
+            if (status === 'death') { badgeClass = "badge-death"; badgeText = "DECEASED"; }
+            else if (status === 'shifted') { badgeClass = "badge-shifted"; badgeText = "SHIFTED"; }
+            else if (status === 'double') { badgeClass = "badge-double"; badgeText = "DOUBLE"; }
+            else if (status === 'nolink') { badgeClass = "badge-nolink"; badgeText = "NO LINK"; }
+            else if (status === 'enrolled') { badgeClass = "badge-enrolled"; badgeText = "ENROLLED"; }
 
             const trHtml = `
-                <tr id="voter-${voter.slNo}" class="${rowClass}" data-status="${status}">
-                    <td><strong>${voter.slNo}</strong></td>
-                    
+                <tr class="voter-row" onclick="openVoterProfile('${voter.slNo}')" data-gender="${voter.gender || 'Male'}">
+                    <td><strong>#${voter.slNo}</strong></td>
                     <td>
-                        <div class="cell-content-box">
-                            ${oldPhotoImg}
-                            <div style="display:flex; gap:2px; margin-top:2px;">
-                                ${oldPhotoBtn}
-                                ${delOldPhotoBtn}
-                            </div>
-                        </div>
+                        <img src="${displayPhoto}" class="voter-thumb-list" alt="Voter">
                     </td>
-
                     <td>
-                        <div class="cell-content-box">
-                            ${newPhotoImg}
-                            <div style="display:flex; gap:2px; margin-top:2px;">
-                                ${newPhotoBtn}
-                                ${delNewPhotoBtn}
-                            </div>
-                        </div>
+                        <span class="voter-name-link">${voter.name}</span>
+                        <div style="font-size:11px; color:var(--text-muted);">S/O, W/O: ${voter.parent || '—'}</div>
                     </td>
-
                     <td>
-                        <div class="cell-content-box">
-                            <span>${voter.houseNo || '—'}</span>
-                            ${houseBtn}
-                        </div>
+                        <div>🏠 ${voter.houseNo || '—'}</div>
+                        <div style="font-size:11px; font-weight:600; color:var(--primary);">🆔 ${voter.epicNo || '—'}</div>
                     </td>
-
                     <td>
-                        <div class="cell-content-box">
-                            <strong>${voter.epicNo || '—'}</strong>
-                            ${epicBtn}
-                        </div>
+                        ${voter.mobile && voter.mobile !== '—' ? `📱 ${voter.mobile}` : '—'}
                     </td>
-
                     <td>
-                        <div class="cell-content-box">
-                            <span>${voter.dob || '—'}</span>
-                            ${dobBtn}
-                        </div>
+                        <span class="status-badge ${badgeClass}">${badgeText}</span>
                     </td>
-
-                    <td>${voter.name}</td>
-                    <td>${voter.parent}</td>
-
-                    <td>
-                        <div class="cell-content-box">
-                            <span class="${voter.mobile && voter.mobile !== '—' ? 'clickable-mobile' : ''}" ondblclick="callMobile('${voter.mobile}')" title="Double tap to call">
-                                ${voter.mobile && voter.mobile !== '—' ? '📱 ' + voter.mobile : '—'}
-                            </span>
-                            ${mobileBtn}
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="cell-content-box">
-                            <span>${voter.aadhaar || '—'}</span>
-                            ${aadhaarBtn}
-                        </div>
-                    </td>
-
-                    <td>${voter.gender || 'Male'}</td>
-
-                    <td>${statusActionHtml}</td>
                 </tr>`;
 
             const targetBody = document.getElementById(`tab-${status}`);
@@ -1798,15 +1925,6 @@
         filterVoters();
     }
     window.renderAll = renderAll;
-
-    function updateStatus(slNo, newStatus) {
-        const voter = (window.voterStore || []).find(v => String(v.slNo) === String(slNo));
-        if (voter) {
-            voter.status = newStatus;
-            renderAll();
-            if (typeof window.syncDatabase === 'function') window.syncDatabase();
-        }
-    }
 
     function addSingleVoter() {
         const slNo = document.getElementById('manualSlNo').value.trim();
